@@ -1,0 +1,253 @@
+{
+  "dataset_type": "Synthetic Network Telemetry (NetCoop AI Phase 3.1)",
+  "is_synthetic": true,
+  "provenance": "Generated via NetCoop AI Incident & Scenario Engines",
+  "total_records": 7800,
+  "total_incidents": 105,
+  "total_devices": 14,
+  "timestamp_range": {
+    "start": "2026-11-01T08:30:00Z",
+    "end": "2026-11-03T12:34:00Z"
+  },
+  "scenarios_distribution": {
+    "congestion": 1125,
+    "dns_dhcp_failure": 1125,
+    "hardware_failure": 1125,
+    "weak_wifi": 1125,
+    "interface_fault": 1100,
+    "latency_spike": 1100,
+    "normal": 1100
+  },
+  "network_segments_distribution": {
+    "CAMPUS_CORE": 2700,
+    "SERVER_NETWORK": 1950,
+    "HOSTEL_WIFI": 1800,
+    "DEPARTMENT_ETHERNET": 1200,
+    "LECTURE_HALL_NETWORK": 150
+  },
+  "device_types_distribution": {
+    "switch": 3325,
+    "server": 1300,
+    "access_point": 1275,
+    "client": 1000,
+    "router": 900
+  },
+  "numeric_metrics_summary": {
+    "latency_ms": {
+      "min": 5.0,
+      "max": 999.0,
+      "mean": 152.65,
+      "std": 220.34
+    },
+    "packet_loss_pct": {
+      "min": 0.0,
+      "max": 40.0,
+      "mean": 5.29,
+      "std": 9.12
+    },
+    "jitter_ms": {
+      "min": 1.0,
+      "max": 149.93,
+      "mean": 28.42,
+      "std": 34.94
+    },
+    "throughput_mbps": {
+      "min": 0.1,
+      "max": 100.0,
+      "mean": 61.24,
+      "std": 37.39
+    },
+    "bandwidth_utilization_pct": {
+      "min": 5.05,
+      "max": 100.0,
+      "mean": 48.09,
+      "std": 25.88
+    },
+    "cpu_usage_pct": {
+      "min": 10.0,
+      "max": 99.9,
+      "mean": 37.86,
+      "std": 24.03
+    },
+    "memory_usage_pct": {
+      "min": 20.02,
+      "max": 99.5,
+      "mean": 43.98,
+      "std": 19.54
+    },
+    "device_uptime_seconds": {
+      "min": 101.8,
+      "max": 863857.0,
+      "mean": 328778.7,
+      "std": 247442.97
+    },
+    "temperature_celsius": {
+      "min": 32.0,
+      "max": 95.0,
+      "mean": 46.71,
+      "std": 13.18
+    },
+    "dns_response_time_ms": {
+      "min": 8.0,
+      "max": 2999.1,
+      "mean": 156.02,
+      "std": 409.95
+    },
+    "queue_drops": {
+      "min": 0.0,
+      "max": 14975.0,
+      "mean": 976.29,
+      "std": 2908.28
+    },
+    "interface_errors": {
+      "min": 0.0,
+      "max": 800.0,
+      "mean": 68.59,
+      "std": 159.88
+    },
+    "wireless_signal_strength_dbm": {
+      "min": -85.0,
+      "max": -45.0,
+      "mean": -61.0,
+      "std": 15.57
+    },
+    "retransmissions": {
+      "min": 0.0,
+      "max": 1200.0,
+      "mean": 119.71,
+      "std": 225.09
+    },
+    "rolling_latency_mean": {
+      "min": 5.08,
+      "max": 991.42,
+      "mean": 152.48,
+      "std": 187.47
+    },
+    "rolling_latency_std": {
+      "min": 0.0,
+      "max": 688.57,
+      "mean": 84.82,
+      "std": 114.11
+    },
+    "rolling_packet_loss_mean": {
+      "min": 0.0,
+      "max": 39.25,
+      "mean": 5.3,
+      "std": 7.73
+    },
+    "rolling_jitter_mean": {
+      "min": 1.1,
+      "max": 149.62,
+      "mean": 28.4,
+      "std": 28.85
+    },
+    "rolling_cpu_mean": {
+      "min": 10.08,
+      "max": 99.9,
+      "mean": 37.83,
+      "std": 20.36
+    },
+    "rolling_memory_mean": {
+      "min": 20.08,
+      "max": 99.06,
+      "mean": 44.0,
+      "std": 16.54
+    },
+    "latency_change_rate": {
+      "min": -991.1,
+      "max": 990.08,
+      "mean": 0.53,
+      "std": 201.82
+    },
+    "packet_loss_change_rate": {
+      "min": -40.0,
+      "max": 40.0,
+      "mean": 0.01,
+      "std": 8.39
+    },
+    "utilization_change_rate": {
+      "min": -80.0,
+      "max": 80.0,
+      "mean": 0.04,
+      "std": 22.51
+    },
+    "queue_drop_rate": {
+      "min": -14975.0,
+      "max": 14975.0,
+      "mean": -1.2,
+      "std": 2449.48
+    },
+    "interface_error_rate": {
+      "min": -796.0,
+      "max": 796.0,
+      "mean": 0.38,
+      "std": 148.76
+    },
+    "bandwidth_pressure_indicator": {
+      "min": 0.05,
+      "max": 30.95,
+      "mean": 2.4,
+      "std": 5.99
+    }
+  },
+  "missing_values_summary": {
+    "wireless_signal_strength_dbm": {
+      "missing_count": 6232,
+      "missing_pct": 79.9
+    }
+  },
+  "duplicates_count": 0,
+  "partitions_summary": {
+    "random_seed": 42,
+    "total_incidents": 105,
+    "total_records": 7800,
+    "train": {
+      "incident_count": 70,
+      "record_count": 5200,
+      "record_pct": 66.67,
+      "scenarios": {
+        "congestion": 750,
+        "dns_dhcp_failure": 750,
+        "hardware_failure": 750,
+        "normal": 750,
+        "weak_wifi": 750,
+        "interface_fault": 725,
+        "latency_spike": 725
+      }
+    },
+    "validation": {
+      "incident_count": 14,
+      "record_count": 1050,
+      "record_pct": 13.46,
+      "scenarios": {
+        "congestion": 150,
+        "dns_dhcp_failure": 150,
+        "hardware_failure": 150,
+        "interface_fault": 150,
+        "latency_spike": 150,
+        "normal": 150,
+        "weak_wifi": 150
+      }
+    },
+    "test": {
+      "incident_count": 21,
+      "record_count": 1550,
+      "record_pct": 19.87,
+      "scenarios": {
+        "congestion": 225,
+        "dns_dhcp_failure": 225,
+        "hardware_failure": 225,
+        "interface_fault": 225,
+        "latency_spike": 225,
+        "weak_wifi": 225,
+        "normal": 200
+      }
+    },
+    "leakage_verification": {
+      "train_val_overlap": 0,
+      "train_test_overlap": 0,
+      "val_test_overlap": 0,
+      "is_leakage_free": true
+    }
+  }
+}

@@ -50,3 +50,10 @@ dist/
 eggs/
 .eggs/
 wheels/
+
+# Large generated ML datasets (keep scripts and small samples)
+ml/datasets/raw/*.csv
+ml/datasets/raw/*.json
+ml/datasets/processed/*.csv
+!ml/datasets/raw/.gitkeep
+!ml/datasets/processed/.gitkeep

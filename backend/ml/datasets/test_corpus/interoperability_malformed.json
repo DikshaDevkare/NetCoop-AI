@@ -1,0 +1,238 @@
+[
+  {
+    "test_id": "MALFORMED-001",
+    "flaw_category": "unsupported_metric_name",
+    "timestamp": "2026-10-31T19:43:51Z",
+    "device_id": "DEV_ERR_5",
+    "metrics": {
+      "cpu_utilization_pct": 25.0,
+      "latency_ms": 15.0,
+      "packet_loss_pct": 0.0,
+      "unknown_quantum_flux_metric": 42.0
+    },
+    "status": "Healthy"
+  },
+  {
+    "test_id": "MALFORMED-002",
+    "flaw_category": "invalid_unit",
+    "timestamp": "2026-10-31T19:43:51Z",
+    "device_id": "DEV_ERR_4",
+    "metrics": {
+      "cpu_utilization_pct": 25.0,
+      "latency_ms": -50.0,
+      "packet_loss_pct": 0.0
+    },
+    "status": "Healthy"
+  },
+  {
+    "test_id": "MALFORMED-003",
+    "flaw_category": "packet_loss_over_100",
+    "timestamp": "2026-10-31T19:43:51Z",
+    "device_id": "DEV_ERR_2",
+    "metrics": {
+      "cpu_utilization_pct": 25.0,
+      "latency_ms": 15.0,
+      "packet_loss_pct": 140.0
+    },
+    "status": "Healthy"
+  },
+  {
+    "test_id": "MALFORMED-004",
+    "flaw_category": "cpu_over_100",
+    "timestamp": "2026-10-31T19:43:51Z",
+    "device_id": "DEV_ERR_4",
+    "metrics": {
+      "cpu_utilization_pct": 200.0,
+      "latency_ms": 15.0,
+      "packet_loss_pct": 0.0
+    },
+    "status": "Healthy"
+  },
+  {
+    "test_id": "MALFORMED-005",
+    "flaw_category": "naive_timestamp",
+    "timestamp": "2026-10-31 12:00:00",
+    "device_id": "DEV_ERR_3",
+    "metrics": {
+      "cpu_utilization_pct": 25.0,
+      "latency_ms": 15.0,
+      "packet_loss_pct": 0.0
+    },
+    "status": "Healthy"
+  },
+  {
+    "test_id": "MALFORMED-006",
+    "flaw_category": "missing_device_id",
+    "timestamp": "2026-10-31T19:43:51Z",
+    "device_id": "",
+    "metrics": {
+      "cpu_utilization_pct": 25.0,
+      "latency_ms": 15.0,
+      "packet_loss_pct": 0.0
+    },
+    "status": "Healthy"
+  },
+  {
+    "test_id": "MALFORMED-007",
+    "flaw_category": "unsupported_protocol_version",
+    "timestamp": "2026-10-31T19:43:51Z",
+    "device_id": "DEV_ERR_3",
+    "metrics": {
+      "cpu_utilization_pct": 25.0,
+      "latency_ms": 15.0,
+      "packet_loss_pct": 0.0,
+      "protocol_version": "9.9"
+    },
+    "status": "Healthy"
+  },
+  {
+    "test_id": "MALFORMED-008",
+    "flaw_category": "invalid_status_enum",
+    "timestamp": "2026-10-31T19:43:51Z",
+    "device_id": "DEV_ERR_3",
+    "metrics": {
+      "cpu_utilization_pct": 25.0,
+      "latency_ms": 15.0,
+      "packet_loss_pct": 0.0,
+      "interface_status": "floating_in_space"
+    },
+    "status": "Healthy"
+  },
+  {
+    "test_id": "MALFORMED-009",
+    "flaw_category": "type_mismatch",
+    "timestamp": "2026-10-31T19:43:51Z",
+    "device_id": "DEV_ERR_1",
+    "metrics": {
+      "cpu_utilization_pct": 25.0,
+      "latency_ms": "super_slow",
+      "packet_loss_pct": 0.0
+    },
+    "status": "Healthy"
+  },
+  {
+    "test_id": "MALFORMED-010",
+    "flaw_category": "missing_required_fields",
+    "timestamp": "2026-10-31T19:43:51Z",
+    "device_id": "DEV_ERR_1",
+    "status": "Healthy"
+  },
+  {
+    "test_id": "MALFORMED-011",
+    "flaw_category": "unsupported_metric_name",
+    "timestamp": "2026-10-31T19:43:51Z",
+    "device_id": "DEV_ERR_3",
+    "metrics": {
+      "cpu_utilization_pct": 25.0,
+      "latency_ms": 15.0,
+      "packet_loss_pct": 0.0,
+      "unknown_quantum_flux_metric": 42.0
+    },
+    "status": "Healthy"
+  },
+  {
+    "test_id": "MALFORMED-012",
+    "flaw_category": "invalid_unit",
+    "timestamp": "2026-10-31T19:43:51Z",
+    "device_id": "DEV_ERR_2",
+    "metrics": {
+      "cpu_utilization_pct": 25.0,
+      "latency_ms": -50.0,
+      "packet_loss_pct": 0.0
+    },
+    "status": "Healthy"
+  },
+  {
+    "test_id": "MALFORMED-013",
+    "flaw_category": "packet_loss_over_100",
+    "timestamp": "2026-10-31T19:43:51Z",
+    "device_id": "DEV_ERR_5",
+    "metrics": {
+      "cpu_utilization_pct": 25.0,
+      "latency_ms": 15.0,
+      "packet_loss_pct": 140.0
+    },
+    "status": "Healthy"
+  },
+  {
+    "test_id": "MALFORMED-014",
+    "flaw_category": "cpu_over_100",
+    "timestamp": "2026-10-31T19:43:51Z",
+    "device_id": "DEV_ERR_5",
+    "metrics": {
+      "cpu_utilization_pct": 200.0,
+      "latency_ms": 15.0,
+      "packet_loss_pct": 0.0
+    },
+    "status": "Healthy"
+  },
+  {
+    "test_id": "MALFORMED-015",
+    "flaw_category": "naive_timestamp",
+    "timestamp": "2026-10-31 12:00:00",
+    "device_id": "DEV_ERR_2",
+    "metrics": {
+      "cpu_utilization_pct": 25.0,
+      "latency_ms": 15.0,
+      "packet_loss_pct": 0.0
+    },
+    "status": "Healthy"
+  },
+  {
+    "test_id": "MALFORMED-016",
+    "flaw_category": "missing_device_id",
+    "timestamp": "2026-10-31T19:43:51Z",
+    "device_id": "",
+    "metrics": {
+      "cpu_utilization_pct": 25.0,
+      "latency_ms": 15.0,
+      "packet_loss_pct": 0.0
+    },
+    "status": "Healthy"
+  },
+  {
+    "test_id": "MALFORMED-017",
+    "flaw_category": "unsupported_protocol_version",
+    "timestamp": "2026-10-31T19:43:51Z",
+    "device_id": "DEV_ERR_5",
+    "metrics": {
+      "cpu_utilization_pct": 25.0,
+      "latency_ms": 15.0,
+      "packet_loss_pct": 0.0,
+      "protocol_version": "9.9"
+    },
+    "status": "Healthy"
+  },
+  {
+    "test_id": "MALFORMED-018",
+    "flaw_category": "invalid_status_enum",
+    "timestamp": "2026-10-31T19:43:51Z",
+    "device_id": "DEV_ERR_1",
+    "metrics": {
+      "cpu_utilization_pct": 25.0,
+      "latency_ms": 15.0,
+      "packet_loss_pct": 0.0,
+      "interface_status": "floating_in_space"
+    },
+    "status": "Healthy"
+  },
+  {
+    "test_id": "MALFORMED-019",
+    "flaw_category": "type_mismatch",
+    "timestamp": "2026-10-31T19:43:51Z",
+    "device_id": "DEV_ERR_4",
+    "metrics": {
+      "cpu_utilization_pct": 25.0,
+      "latency_ms": "super_slow",
+      "packet_loss_pct": 0.0
+    },
+    "status": "Healthy"
+  },
+  {
+    "test_id": "MALFORMED-020",
+    "flaw_category": "missing_required_fields",
+    "timestamp": "2026-10-31T19:43:51Z",
+    "device_id": "DEV_ERR_2",
+    "status": "Healthy"
+  }
+]
