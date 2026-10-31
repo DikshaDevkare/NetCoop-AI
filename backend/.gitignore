@@ -1,0 +1,52 @@
+# ==============================================================================
+# NetCoop AI - Git Ignore
+# ==============================================================================
+
+# Environment variables and secrets
+.env
+.env.local
+.env.*.local
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# Python bytecode and cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+
+# Testing and coverage caches
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+
+# IDE and editor settings
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Operating system files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Build and distribution artifacts
+build/
+dist/
+*.egg-info/
+*.egg
+eggs/
+.eggs/
+wheels/
