@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import { NavLink, useLocation, useNavigate, Link } from 'react-router-dom';
 import {
@@ -18,6 +18,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext.tsx';
+import { checkBackendHealth } from '../../services/healthService.ts';
 import { cn } from '../../lib/utils.ts';
 
 interface AppLayoutProps {
@@ -33,6 +34,17 @@ export function AppLayout({ children }: AppLayoutProps) {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [backendStatus, setBackendStatus] = useState<{ connected: boolean; version?: string }>({
+    connected: false,
+  });
+
+  useEffect(() => {
+    checkBackendHealth().then((res) => {
+      if (res.connected && res.data) {
+        setBackendStatus({ connected: true, version: res.data.version });
+      }
+    });
+  }, []);
 
   const navItems = [
     { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
@@ -189,7 +201,7 @@ export function AppLayout({ children }: AppLayoutProps) {
           </nav>
         </div>
 
-        {/* Sidebar Footer: System Online Status */}
+        {/* Sidebar Footer: System Online Status & Backend Indicator */}
         <div style={{ padding: '18px 20px', borderTop: '1px solid rgba(255, 255, 255, 0.06)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <span
@@ -197,16 +209,16 @@ export function AppLayout({ children }: AppLayoutProps) {
                 width: '8px',
                 height: '8px',
                 borderRadius: '50%',
-                backgroundColor: '#10B981',
-                boxShadow: '0 0 8px #10B981',
+                backgroundColor: backendStatus.connected ? '#10B981' : '#38D9FF',
+                boxShadow: `0 0 8px ${backendStatus.connected ? '#10B981' : '#38D9FF'}`,
               }}
             />
             <span style={{ fontSize: '12px', fontWeight: 600, color: '#F5F5F7' }}>
-              System Online
+              {backendStatus.connected ? `FastAPI v${backendStatus.version}` : 'System Online'}
             </span>
           </div>
           <div style={{ fontSize: '10px', color: '#6A6D7C', marginTop: '4px', letterSpacing: '0.02em' }}>
-            Multi-Agent Quorum 5/5 Active
+            {backendStatus.connected ? 'Connected to /api/health' : 'Multi-Agent Quorum 5/5 Active'}
           </div>
         </div>
       </aside>
