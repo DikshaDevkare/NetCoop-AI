@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 350" width="500" height="350">
+  <style>
+    .title { font-family: sans-serif; font-size: 16px; font-weight: bold; fill: #1e293b; text-anchor: middle; }
+    .label { font-family: sans-serif; font-size: 12px; fill: #64748b; text-anchor: middle; }
+    .cell-txt { font-family: sans-serif; font-size: 18px; font-weight: bold; fill: #0f172a; text-anchor: middle; }
+    .sub-txt { font-family: sans-serif; font-size: 11px; fill: #475569; text-anchor: middle; }
+  </style>
+  <rect width="500" height="350" fill="#ffffff" rx="8" />
+  <text x="250" y="30" class="title">Isolation Forest Confusion Matrix (Test Set)</text>
+
+  <!-- Headers -->
+  <text x="200" y="70" class="label">Predicted Normal (0)</text>
+  <text x="360" y="70" class="label">Predicted Anomaly (1)</text>
+  <text x="70" y="145" class="label" transform="rotate(-90, 70, 145)">Actual Normal (0)</text>
+  <text x="70" y="255" class="label" transform="rotate(-90, 70, 255)">Actual Anomaly (1)</text>
+
+  <!-- Cell TN -->
+  <rect x="120" y="90" width="160" height="100" fill="#dcfce7" stroke="#86efac" stroke-width="2" rx="4" />
+  <text x="200" y="140" class="cell-txt">6</text>
+  <text x="200" y="165" class="sub-txt">True Negatives (TN)</text>
+
+  <!-- Cell FP -->
+  <rect x="290" y="90" width="160" height="100" fill="#fee2e2" stroke="#fca5a5" stroke-width="2" rx="4" />
+  <text x="370" y="140" class="cell-txt">194</text>
+  <text x="370" y="165" class="sub-txt">False Positives (FP)</text>
+
+  <!-- Cell FN -->
+  <rect x="120" y="200" width="160" height="100" fill="#fee2e2" stroke="#fca5a5" stroke-width="2" rx="4" />
+  <text x="200" y="250" class="cell-txt">2</text>
+  <text x="200" y="275" class="sub-txt">False Negatives (FN)</text>
+
+  <!-- Cell TP -->
+  <rect x="290" y="200" width="160" height="100" fill="#dbeafe" stroke="#93c5fd" stroke-width="2" rx="4" />
+  <text x="370" y="250" class="cell-txt">1348</text>
+  <text x="370" y="275" class="sub-txt">True Positives (TP)</text>
+</svg>

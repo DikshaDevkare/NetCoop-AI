@@ -1,0 +1,68 @@
+{
+  "model_type": "IsolationForest",
+  "algorithm": "sklearn.ensemble.IsolationForest",
+  "is_fitted": true,
+  "fitted_at": "2026-10-31T20:59:43Z",
+  "training_samples_count": 750,
+  "training_filter": "scenario_label == 'normal'",
+  "feature_columns": [
+    "latency_ms",
+    "packet_loss_pct",
+    "jitter_ms",
+    "throughput_mbps",
+    "bandwidth_utilization_pct",
+    "cpu_usage_pct",
+    "memory_usage_pct",
+    "device_uptime_seconds",
+    "temperature_celsius",
+    "dns_response_time_ms",
+    "queue_drops",
+    "interface_errors",
+    "retransmissions",
+    "rolling_latency_mean",
+    "rolling_latency_std",
+    "rolling_packet_loss_mean",
+    "latency_change_rate",
+    "queue_drop_rate"
+  ],
+  "feature_count": 18,
+  "hyperparameters": {
+    "n_estimators": 100,
+    "max_samples": "auto",
+    "max_features": 1.0,
+    "contamination": "auto",
+    "random_state": 42
+  },
+  "threshold": -0.04453480854250624,
+  "threshold_selection_method": "validation_f2_tuning",
+  "dependency_versions": {
+    "scikit-learn": "1.9.1",
+    "joblib": "1.6.0",
+    "numpy": "2.4.6"
+  },
+  "validation_tuning_summary": {
+    "selected_threshold": -0.044535,
+    "tuning_objective": "Maximize F2_score (prioritizing fault recall)",
+    "beta": 2.0,
+    "best_f_beta_score": 0.9636,
+    "candidates_evaluated": 92,
+    "validation_metrics_at_threshold": {
+      "total_samples": 1050,
+      "total_anomalies_actual": 900,
+      "total_normals_actual": 150,
+      "confusion_matrix": {
+        "true_positives": 894,
+        "false_positives": 145,
+        "true_negatives": 5,
+        "false_negatives": 6
+      },
+      "accuracy": 0.8562,
+      "precision": 0.8604,
+      "recall": 0.9933,
+      "f1_score": 0.9221,
+      "f2_score": 0.9636,
+      "roc_auc": 0.8837,
+      "pr_auc": 0.9804
+    }
+  }
+}

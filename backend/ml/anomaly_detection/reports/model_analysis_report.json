@@ -1,0 +1,127 @@
+{
+  "validation_metrics": {
+    "total_samples": 1050,
+    "total_anomalies_actual": 900,
+    "total_normals_actual": 150,
+    "confusion_matrix": {
+      "true_positives": 894,
+      "false_positives": 145,
+      "true_negatives": 5,
+      "false_negatives": 6
+    },
+    "accuracy": 0.8562,
+    "precision": 0.8604,
+    "recall": 0.9933,
+    "f1_score": 0.9221,
+    "f2_score": 0.9636,
+    "roc_auc": 0.8837,
+    "pr_auc": 0.9804
+  },
+  "test_metrics": {
+    "total_samples": 1550,
+    "total_anomalies_actual": 1350,
+    "total_normals_actual": 200,
+    "confusion_matrix": {
+      "true_positives": 1348,
+      "false_positives": 194,
+      "true_negatives": 6,
+      "false_negatives": 2
+    },
+    "accuracy": 0.8735,
+    "precision": 0.8742,
+    "recall": 0.9985,
+    "f1_score": 0.9322,
+    "f2_score": 0.9709,
+    "roc_auc": 0.9204,
+    "pr_auc": 0.9884
+  },
+  "score_distributions": {
+    "normal_telemetry": {
+      "count": 200,
+      "mean": 0.0042,
+      "std": 0.0273,
+      "min": -0.0519,
+      "p25": -0.0129,
+      "median": 0.0036,
+      "p75": 0.0223,
+      "p90": 0.0394,
+      "max": 0.0786
+    },
+    "faulty_telemetry": {
+      "count": 1350,
+      "mean": 0.103,
+      "std": 0.0551,
+      "min": -0.0569,
+      "p25": 0.0651,
+      "median": 0.1191,
+      "p75": 0.1511,
+      "p90": 0.1585,
+      "max": 0.1776
+    }
+  },
+  "per_scenario_breakdown_test": {
+    "congestion": {
+      "total_records": 225,
+      "predicted_normal": 1,
+      "predicted_anomaly": 224,
+      "detection_accuracy_pct": 99.56,
+      "mean_anomaly_score": 0.1059,
+      "min_anomaly_score": -0.0569,
+      "max_anomaly_score": 0.1661
+    },
+    "dns_dhcp_failure": {
+      "total_records": 225,
+      "predicted_normal": 0,
+      "predicted_anomaly": 225,
+      "detection_accuracy_pct": 100.0,
+      "mean_anomaly_score": 0.0744,
+      "min_anomaly_score": -0.0321,
+      "max_anomaly_score": 0.1461
+    },
+    "hardware_failure": {
+      "total_records": 225,
+      "predicted_normal": 0,
+      "predicted_anomaly": 225,
+      "detection_accuracy_pct": 100.0,
+      "mean_anomaly_score": 0.1197,
+      "min_anomaly_score": -0.0405,
+      "max_anomaly_score": 0.1655
+    },
+    "interface_fault": {
+      "total_records": 225,
+      "predicted_normal": 1,
+      "predicted_anomaly": 224,
+      "detection_accuracy_pct": 99.56,
+      "mean_anomaly_score": 0.1105,
+      "min_anomaly_score": -0.0458,
+      "max_anomaly_score": 0.1776
+    },
+    "latency_spike": {
+      "total_records": 225,
+      "predicted_normal": 0,
+      "predicted_anomaly": 225,
+      "detection_accuracy_pct": 100.0,
+      "mean_anomaly_score": 0.1128,
+      "min_anomaly_score": -0.041,
+      "max_anomaly_score": 0.1718
+    },
+    "normal": {
+      "total_records": 200,
+      "predicted_normal": 6,
+      "predicted_anomaly": 194,
+      "detection_accuracy_pct": 3.0,
+      "mean_anomaly_score": 0.0042,
+      "min_anomaly_score": -0.0519,
+      "max_anomaly_score": 0.0786
+    },
+    "weak_wifi": {
+      "total_records": 225,
+      "predicted_normal": 0,
+      "predicted_anomaly": 225,
+      "detection_accuracy_pct": 100.0,
+      "mean_anomaly_score": 0.0945,
+      "min_anomaly_score": -0.0431,
+      "max_anomaly_score": 0.1568
+    }
+  }
+}
