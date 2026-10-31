@@ -1,0 +1,58 @@
+{
+  "model_type": "XGBoostClassifier",
+  "algorithm": "xgboost.XGBClassifier",
+  "model_version": "1.0.0",
+  "is_fitted": true,
+  "fitted_at": "2026-10-31T21:31:40.486114+00:00",
+  "training_samples_count": 5200,
+  "target_classes": [
+    "normal",
+    "congestion",
+    "dns_dhcp_failure",
+    "hardware_failure",
+    "weak_wifi",
+    "interface_fault",
+    "latency_spike"
+  ],
+  "feature_columns": [
+    "latency_ms",
+    "packet_loss_pct",
+    "jitter_ms",
+    "throughput_mbps",
+    "bandwidth_utilization_pct",
+    "cpu_usage_pct",
+    "memory_usage_pct",
+    "device_uptime_seconds",
+    "temperature_celsius",
+    "dns_response_time_ms",
+    "queue_drops",
+    "interface_errors",
+    "retransmissions",
+    "rolling_latency_mean",
+    "rolling_latency_std",
+    "rolling_packet_loss_mean",
+    "latency_change_rate",
+    "queue_drop_rate"
+  ],
+  "feature_count": 18,
+  "hyperparameters": {
+    "n_estimators": 120,
+    "max_depth": 5,
+    "learning_rate": 0.08,
+    "subsample": 0.85,
+    "colsample_bytree": 0.85,
+    "objective": "multi:softprob",
+    "eval_metric": "mlogloss",
+    "random_state": 42
+  },
+  "dependency_versions": {
+    "xgboost": "3.2.0",
+    "scikit-learn": "1.9.1",
+    "joblib": "1.6.0"
+  },
+  "validation_summary": {
+    "accuracy": 0.8467,
+    "f1_macro": 0.8622,
+    "f1_weighted": 0.8622
+  }
+}

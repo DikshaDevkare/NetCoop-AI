@@ -1,0 +1,185 @@
+{
+  "total_samples": 1550,
+  "accuracy": 0.8652,
+  "precision_macro": 0.9123,
+  "precision_weighted": 0.9186,
+  "recall_macro": 0.8672,
+  "recall_weighted": 0.8652,
+  "f1_macro": 0.8747,
+  "f1_weighted": 0.8778,
+  "roc_auc_weighted": 0.973,
+  "confusion_matrix": {
+    "normal": {
+      "normal": 199,
+      "congestion": 0,
+      "dns_dhcp_failure": 0,
+      "hardware_failure": 0,
+      "weak_wifi": 0,
+      "interface_fault": 0,
+      "latency_spike": 1
+    },
+    "congestion": {
+      "normal": 43,
+      "congestion": 176,
+      "dns_dhcp_failure": 1,
+      "hardware_failure": 0,
+      "weak_wifi": 4,
+      "interface_fault": 0,
+      "latency_spike": 1
+    },
+    "dns_dhcp_failure": {
+      "normal": 14,
+      "congestion": 0,
+      "dns_dhcp_failure": 207,
+      "hardware_failure": 0,
+      "weak_wifi": 1,
+      "interface_fault": 0,
+      "latency_spike": 3
+    },
+    "hardware_failure": {
+      "normal": 28,
+      "congestion": 1,
+      "dns_dhcp_failure": 0,
+      "hardware_failure": 195,
+      "weak_wifi": 0,
+      "interface_fault": 1,
+      "latency_spike": 0
+    },
+    "weak_wifi": {
+      "normal": 37,
+      "congestion": 2,
+      "dns_dhcp_failure": 0,
+      "hardware_failure": 1,
+      "weak_wifi": 183,
+      "interface_fault": 2,
+      "latency_spike": 0
+    },
+    "interface_fault": {
+      "normal": 30,
+      "congestion": 1,
+      "dns_dhcp_failure": 0,
+      "hardware_failure": 1,
+      "weak_wifi": 5,
+      "interface_fault": 188,
+      "latency_spike": 0
+    },
+    "latency_spike": {
+      "normal": 31,
+      "congestion": 0,
+      "dns_dhcp_failure": 1,
+      "hardware_failure": 0,
+      "weak_wifi": 0,
+      "interface_fault": 0,
+      "latency_spike": 193
+    }
+  },
+  "confusion_matrix_raw": [
+    [
+      199,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1
+    ],
+    [
+      43,
+      176,
+      1,
+      0,
+      4,
+      0,
+      1
+    ],
+    [
+      14,
+      0,
+      207,
+      0,
+      1,
+      0,
+      3
+    ],
+    [
+      28,
+      1,
+      0,
+      195,
+      0,
+      1,
+      0
+    ],
+    [
+      37,
+      2,
+      0,
+      1,
+      183,
+      2,
+      0
+    ],
+    [
+      30,
+      1,
+      0,
+      1,
+      5,
+      188,
+      0
+    ],
+    [
+      31,
+      0,
+      1,
+      0,
+      0,
+      0,
+      193
+    ]
+  ],
+  "per_class_metrics": {
+    "normal": {
+      "precision": 0.5209,
+      "recall": 0.995,
+      "f1_score": 0.6838,
+      "support": 200
+    },
+    "congestion": {
+      "precision": 0.9778,
+      "recall": 0.7822,
+      "f1_score": 0.8691,
+      "support": 225
+    },
+    "dns_dhcp_failure": {
+      "precision": 0.9904,
+      "recall": 0.92,
+      "f1_score": 0.9539,
+      "support": 225
+    },
+    "hardware_failure": {
+      "precision": 0.9898,
+      "recall": 0.8667,
+      "f1_score": 0.9242,
+      "support": 225
+    },
+    "weak_wifi": {
+      "precision": 0.9482,
+      "recall": 0.8133,
+      "f1_score": 0.8756,
+      "support": 225
+    },
+    "interface_fault": {
+      "precision": 0.9843,
+      "recall": 0.8356,
+      "f1_score": 0.9038,
+      "support": 225
+    },
+    "latency_spike": {
+      "precision": 0.9747,
+      "recall": 0.8578,
+      "f1_score": 0.9125,
+      "support": 225
+    }
+  }
+}

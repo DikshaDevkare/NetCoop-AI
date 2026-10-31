@@ -1,0 +1,27 @@
+{
+  "pipeline_type": "SequenceTemporalAnalyzer",
+  "version": "1.0.0",
+  "window_size": 5,
+  "monitored_metrics": [
+    "latency_ms",
+    "packet_loss_pct",
+    "jitter_ms",
+    "throughput_mbps",
+    "bandwidth_utilization_pct",
+    "cpu_usage_pct",
+    "memory_usage_pct",
+    "queue_drops",
+    "interface_errors"
+  ],
+  "normal_baselines": {
+    "latency_ms": 25.0,
+    "packet_loss_pct": 0.05,
+    "jitter_ms": 6.0,
+    "throughput_mbps": 50.0,
+    "cpu_usage_pct": 50.0,
+    "memory_usage_pct": 60.0,
+    "bandwidth_utilization_pct": 60.0,
+    "queue_drops": 5.0,
+    "interface_errors": 2.0
+  }
+}

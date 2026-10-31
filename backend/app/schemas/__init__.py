@@ -28,6 +28,12 @@ from app.schemas.messages import (
     StatusPayload,
     TelemetryBatchPayload,
 )
+from app.schemas.diagnosis import (
+    DiagnosisRequest,
+    DiagnosisResponse,
+    AgentsListResponse,
+    ModelsListResponse,
+)
 from app.schemas.telemetry import METRIC_REGISTRY, MetricSpecification, TelemetryRecord
 
 __all__ = [
