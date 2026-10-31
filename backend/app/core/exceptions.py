@@ -8,6 +8,7 @@ safeguarding internal implementation details and logging server-side diagnostic 
 import http
 from typing import Any, Dict
 from fastapi import FastAPI, Request, status
+from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
@@ -81,7 +82,7 @@ async def validation_exception_handler(
     """
     logger.warning("Validation error on %s: %s", request.url.path, exc.errors())
     settings = get_settings()
-    details = exc.errors() if settings.DEBUG else None
+    details = jsonable_encoder(exc.errors()) if settings.DEBUG else None
 
     return JSONResponse(
         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,

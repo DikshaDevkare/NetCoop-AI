@@ -11,7 +11,9 @@ In its complete multi-agent architecture, the backend will coordinate five speci
 4. **Fault Correlation Agent** — Correlates cross-domain evidence to isolate probable root-cause failure points.
 5. **Recommendation & Reporting Agent** — Generates human-understandable diagnostic summaries and mitigation workflows.
 
-*Note: Phase 1 establishes the core FastAPI platform, reliability infrastructure, health endpoints, CORS, logging, exception handling, and automated test suite. Agent pipelines will be introduced in subsequent phases.*
+*Note: Phase 1 established the core FastAPI application, reliability infrastructure, health endpoints, CORS, logging, exception handling, and automated test suite. Phase 2 establishes the Interoperability & Standard Data Protocol (v1.0), canonical schemas, UTC timestamp rules, and agent message envelopes. Agent diagnostic pipelines will be introduced in subsequent phases.*
+
+For full details on the multi-agent communication protocol, see [Interoperability Protocol Specification](docs/interoperability_protocol.md).
 
 ---
 
@@ -36,19 +38,41 @@ backend/
 │   │
 │   ├── api/                  # REST API route modules
 │   │   ├── __init__.py
-│   │   └── health.py         # Welcome (/) and health check (/api/health) endpoints
+│   │   ├── health.py         # Welcome (/) and health check (/api/health) endpoints
+│   │   └── protocol.py       # Protocol message validation (/api/protocol/validate)
 │   │
 │   ├── core/                 # Shared cross-cutting application infrastructure
 │   │   ├── __init__.py
 │   │   ├── logging_config.py # Structured, idempotent application logging system
 │   │   └── exceptions.py     # Centralized exception handlers and JSON error envelope
 │   │
+│   ├── schemas/              # Phase 2: Interoperability Protocol Schemas (v1.0)
+│   │   ├── __init__.py       # Package exports
+│   │   ├── common.py         # ProtocolBaseModel, PROTOCOL_VERSION, UTCDatetime
+│   │   ├── enums.py          # MessageType, AgentId, MetricName, MetricUnit, etc.
+│   │   ├── device.py         # Device identification and IP/MAC validators
+│   │   ├── telemetry.py      # TelemetryRecord, METRIC_REGISTRY, bounds validation
+│   │   ├── evidence.py       # Observation and Evidence models
+│   │   ├── findings.py       # DiagnosticFinding model
+│   │   └── messages.py       # AgentMessage envelope and payload validators
+│   │
 │   └── services/             # Business logic layer (reserved for future agent services)
 │       └── __init__.py
 │
 ├── tests/                    # Automated test suite
 │   ├── __init__.py
-│   └── test_health.py        # Comprehensive endpoint, CORS, and error handling tests
+│   ├── test_health.py        # Phase 1: Endpoints, CORS, and error handling tests
+│   └── test_protocol/        # Phase 2: Interoperability protocol test suite
+│       ├── __init__.py
+│       ├── test_common.py    # Base model, version, and UTC timestamp tests
+│       ├── test_device.py    # Device schema, IP and MAC address tests
+│       ├── test_telemetry.py # Metric categories, units, and bounds tests
+│       ├── test_evidence.py  # Observation and evidence schema tests
+│       ├── test_findings.py  # Diagnostic findings and limitations tests
+│       └── test_messages.py  # AgentMessage envelope and validation API tests
+│
+├── docs/                     # Documentation specifications
+│   └── interoperability_protocol.md  # Detailed Protocol v1.0 specification
 │
 ├── requirements.txt          # Production and testing Python dependencies
 ├── .env.example              # Documented environment configuration template
@@ -191,7 +215,22 @@ Once the server is running, explore the interactive documentation in your browse
   }
   ```
 
-### 3. Standardized Error Envelope
+### 3. Protocol Message Validation Endpoint
+- **URL**: `POST http://localhost:8000/api/protocol/validate`
+- **Purpose**: Validates an incoming `AgentMessage` envelope and payload against the Interoperability Protocol (v1.0) without executing diagnostic logic.
+- **Response (200 OK)**:
+  ```json
+  {
+    "valid": true,
+    "message_id": "msg-001",
+    "message_type": "observation",
+    "protocol_version": "1.0",
+    "sender": "telemetry_performance",
+    "receiver": "fault_correlation"
+  }
+  ```
+
+### 4. Standardized Error Envelope
 - **Status Codes**: 404, 422, 500, etc.
 - **Response Structure**:
   ```json

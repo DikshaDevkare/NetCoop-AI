@@ -15,6 +15,7 @@ from app.config import get_settings
 from app.core.logging_config import setup_logging, get_logger
 from app.core.exceptions import register_exception_handlers
 from app.api.health import health_router, root_router
+from app.api.protocol import protocol_router
 
 logger = get_logger("netcoop.main")
 
@@ -87,6 +88,8 @@ def create_application() -> FastAPI:
     application.include_router(root_router)
     # Health and diagnostic checks registered under configured prefix (/api/health)
     application.include_router(health_router, prefix=settings.API_PREFIX)
+    # Interoperability protocol validation registered under configured prefix (/api/protocol)
+    application.include_router(protocol_router, prefix=settings.API_PREFIX)
 
     return application
 
