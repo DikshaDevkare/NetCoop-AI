@@ -151,11 +151,11 @@ export function HeroSection() {
               marginBottom: '44px',
             }}
           >
-            <a href="#architecture" style={{ textDecoration: 'none' }}>
+            <Link to="/dashboard" style={{ textDecoration: 'none' }}>
               <GlowButton variant="primary" size="lg" icon={ArrowRight} iconPosition="right">
-                Explore 5-Agent Architecture
+                Launch Command Centre (All 7 Screens)
               </GlowButton>
-            </a>
+            </Link>
 
             <Link to="/design-system" style={{ textDecoration: 'none' }}>
               <GlowButton variant="secondary" size="lg" icon={Sparkles}>

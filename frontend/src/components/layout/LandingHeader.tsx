@@ -147,11 +147,11 @@ export function LandingHeader() {
           </button>
         </Link>
 
-        <a href="#how-it-works" style={{ textDecoration: 'none' }}>
+        <Link to="/dashboard" style={{ textDecoration: 'none' }}>
           <GlowButton variant="primary" size="sm" icon={ArrowRight} iconPosition="right">
-            Explore Platform
+            Launch Command Centre
           </GlowButton>
-        </a>
+        </Link>
       </div>
     </header>
   );
