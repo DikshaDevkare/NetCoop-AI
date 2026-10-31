@@ -1,0 +1,30 @@
+import { AppLayout } from '../../components/layout/AppLayout.tsx';
+import { GlassCard } from '../../components/ui/GlassCard.tsx';
+import { Layers } from 'lucide-react';
+
+export function DashboardPage() {
+  return (
+    <AppLayout>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        <div>
+          <h1 style={{ fontSize: '24px', fontWeight: 700, color: '#F5F5F7', marginBottom: '4px' }}>
+            Network Command Centre
+          </h1>
+          <p style={{ fontSize: '13px', color: '#A3A6B3' }}>
+            Real-time network health, incidents and multi-agent operations.
+          </p>
+        </div>
+
+        <GlassCard variant="default" style={{ padding: '36px', textAlign: 'center' }}>
+          <Layers size={36} color="#FF7A18" style={{ margin: '0 auto 14px' }} />
+          <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#F5F5F7', marginBottom: '8px' }}>
+            Phase 3: Network Command Centre In Progress
+          </h3>
+          <p style={{ fontSize: '13px', color: '#A3A6B3', maxWidth: '520px', margin: '0 auto' }}>
+            Central 3D Network Topology and Animated Telemetry Charts will be populated in Phase 3.
+          </p>
+        </GlassCard>
+      </div>
+    </AppLayout>
+  );
+}

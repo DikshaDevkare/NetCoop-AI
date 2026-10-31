@@ -16,6 +16,7 @@ export function GlowButton({
   onClick,
   className,
   type = 'button',
+  style: customStyle,
 }: GlowButtonProps) {
   const sizeStyles: Record<string, CSSProperties> = {
     sm: { padding: '8px 14px', fontSize: '13px', borderRadius: '8px', gap: '6px' },
@@ -73,6 +74,7 @@ export function GlowButton({
     outline: 'none',
     ...sizeStyles[size],
     ...variantStyles[variant],
+    ...customStyle,
   };
 
   return (

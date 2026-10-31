@@ -23,6 +23,7 @@ export interface GlowButtonProps {
   onClick?: MouseEventHandler<HTMLButtonElement>;
   className?: string;
   type?: 'button' | 'submit' | 'reset';
+  style?: CSSProperties;
 }
 
 export interface SectionHeadingProps {
