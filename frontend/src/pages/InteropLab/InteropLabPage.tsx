@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { AppLayout } from '../../components/layout/AppLayout.tsx';
 import { GlassCard } from '../../components/ui/GlassCard.tsx';
 import { GlowButton } from '../../components/ui/GlowButton.tsx';
+import { JsonMessageEditor } from '../../components/interop/JsonMessageEditor.tsx';
 import { CheckCircle2, Send, Check, Terminal } from 'lucide-react';
 
 export function InteropLabPage() {
@@ -42,7 +43,7 @@ export function InteropLabPage() {
   return (
     <AppLayout>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
-        {/* Title Header */}
+        {/* Title Header (Exact Reference Match) */}
         <div>
           <h1 style={{ fontSize: '24px', fontWeight: 700, color: '#F5F5F7', marginBottom: '4px', letterSpacing: '-0.02em' }}>
             Interoperability Lab
@@ -148,25 +149,24 @@ export function InteropLabPage() {
                   outline: 'none',
                 }}
               >
-                <option value="v1.0.0">v1.0.0 (Strict)</option>
-                <option value="v1.1.0-beta">v1.1.0-beta</option>
+                <option value="v1.0.0">v1.0.0</option>
+                <option value="v1.1.0-draft">v1.1.0-draft</option>
               </select>
             </div>
 
-            {/* Validate & Send Action Buttons */}
+            {/* Action Buttons: Validate & Send Request */}
             <div style={{ display: 'flex', gap: '12px', marginTop: '6px' }}>
               <button
-                type="button"
                 onClick={handleValidate}
                 style={{
                   flex: 1,
-                  padding: '11px',
+                  padding: '10px',
                   borderRadius: '8px',
-                  background: 'rgba(56, 217, 255, 0.15)',
-                  border: '1px solid rgba(56, 217, 255, 0.4)',
-                  color: '#38D9FF',
-                  fontSize: '13px',
+                  background: 'rgba(168, 85, 247, 0.12)',
+                  border: '1px solid #A855F7',
+                  color: '#A855F7',
                   fontWeight: 600,
+                  fontSize: '13px',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
@@ -180,94 +180,63 @@ export function InteropLabPage() {
 
               <GlowButton
                 variant="primary"
-                size="md"
                 onClick={handleSend}
                 icon={Send}
-                iconPosition="right"
-                style={{ flex: 1.2 }}
+                style={{ flex: 1.2, padding: '10px' }}
               >
-                {sentSuccess ? 'Request Dispatched!' : 'Send Request'}
+                {sentSuccess ? 'Transmitted!' : 'Send Request'}
               </GlowButton>
             </div>
           </GlassCard>
 
-          {/* Right Card: JSON Code Editor (Exact Reference Match) */}
-          <GlassCard variant="default" style={{ padding: '0', overflow: 'hidden' }}>
-            <div
-              style={{
-                padding: '12px 18px',
-                background: 'rgba(8, 9, 13, 0.8)',
-                borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Terminal size={14} color="#38D9FF" />
-                <span style={{ fontSize: '12px', fontFamily: 'monospace', color: '#A3A6B3' }}>
-                  request_payload.json
-                </span>
-              </div>
-              <span style={{ fontSize: '10px', color: '#10B981', fontWeight: 600 }}>SYNTAX VALID</span>
-            </div>
-
-            <textarea
-              value={jsonPayload}
-              onChange={(e) => setJsonPayload(e.target.value)}
-              rows={10}
-              style={{
-                width: '100%',
-                padding: '18px',
-                background: 'transparent',
-                border: 'none',
-                color: '#38D9FF',
-                fontFamily: '"JetBrains Mono", Consolas, monospace',
-                fontSize: '13px',
-                lineHeight: 1.6,
-                outline: 'none',
-                resize: 'none',
-              }}
-            />
-          </GlassCard>
+          {/* Right Editor: JSON Message Payload */}
+          <JsonMessageEditor
+            initialJson={jsonPayload}
+            onChange={(val) => setJsonPayload(val)}
+          />
         </div>
 
         {/* Bottom 2 Cards: Compatibility Result on Left, Message Exchange on Right */}
         <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1.2fr)', gap: '20px' }}>
           {/* Compatibility Result */}
           <GlassCard variant="default" style={{ padding: '20px' }}>
-            <h3 style={{ fontSize: '14px', fontWeight: 700, color: '#F5F5F7', marginBottom: '14px' }}>Compatibility Result</h3>
+            <h3 style={{ fontSize: '14px', fontWeight: 700, color: '#F5F5F7', marginBottom: '14px' }}>
+              Compatibility Result
+            </h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#F5F5F7' }}>
-                <CheckCircle2 size={16} color={validated ? '#10B981' : '#FF4D4D'} />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: validated ? '#10B981' : '#FF4D4D' }}>
+                <CheckCircle2 size={16} />
                 <span>Schema valid</span>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#F5F5F7' }}>
-                <CheckCircle2 size={16} color="#10B981" />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: validated ? '#10B981' : '#FF4D4D' }}>
+                <CheckCircle2 size={16} />
                 <span>All required fields present</span>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#F5F5F7' }}>
-                <CheckCircle2 size={16} color="#10B981" />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: validated ? '#10B981' : '#FF4D4D' }}>
+                <CheckCircle2 size={16} />
                 <span>Data types correct</span>
               </div>
             </div>
           </GlassCard>
 
-          {/* Message Exchange Timeline */}
+          {/* Message Exchange Log */}
           <GlassCard variant="default" style={{ padding: '20px' }}>
-            <h3 style={{ fontSize: '14px', fontWeight: 700, color: '#F5F5F7', marginBottom: '14px' }}>Message Exchange</h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '12px', fontFamily: '"JetBrains Mono", monospace' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', color: '#A855F7' }}>
-                <span>&bull; Orchestrator &rarr; Perf Agent</span>
-                <span style={{ color: '#A3A6B3' }}>14:02:11</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+              <Terminal size={14} color="#FF7A18" />
+              <h3 style={{ fontSize: '14px', fontWeight: 700, color: '#F5F5F7' }}>Message Exchange</h3>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '12px', fontFamily: 'monospace' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', color: '#F5F5F7' }}>
+                <span style={{ color: '#FF7A18' }}>Orchestrator → Perf Agent</span>
+                <span style={{ color: '#6A6D7C' }}>14:02:11</span>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', color: '#38D9FF' }}>
-                <span>&bull; Perf Agent &rarr; Orchestrator</span>
-                <span style={{ color: '#A3A6B3' }}>14:02:14</span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', color: '#F5F5F7' }}>
+                <span style={{ color: '#38D9FF' }}>Perf Agent → Orchestrator</span>
+                <span style={{ color: '#6A6D7C' }}>14:02:19</span>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', color: '#FF7A18' }}>
-                <span>&bull; Orchestrator &rarr; Corr Agent</span>
-                <span style={{ color: '#A3A6B3' }}>14:02:20</span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', color: '#F5F5F7' }}>
+                <span style={{ color: '#A855F7' }}>Orchestrator → Corr Agent</span>
+                <span style={{ color: '#6A6D7C' }}>14:02:20</span>
               </div>
             </div>
           </GlassCard>

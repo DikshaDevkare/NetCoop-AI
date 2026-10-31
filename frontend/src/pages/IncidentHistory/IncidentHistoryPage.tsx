@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { AppLayout } from '../../components/layout/AppLayout.tsx';
 import { GlassCard } from '../../components/ui/GlassCard.tsx';
+import { IncidentTable } from '../../components/incident/IncidentTable.tsx';
 import { Search, Calendar, ChevronDown } from 'lucide-react';
 import {
   ResponsiveContainer,
@@ -24,39 +25,15 @@ const TREND_DATA = [
 
 const DONUT_DATA = [
   { name: 'Congestion', value: 38, color: '#FF7A18' },
-  { name: 'Interface Failure', value: 22, color: '#38D9FF' },
+  { name: 'Interface Failure', value: 24, color: '#38D9FF' },
   { name: 'DNS/DHCP', value: 16, color: '#A855F7' },
   { name: 'Device Overload', value: 12, color: '#FFB347' },
-  { name: 'Others', value: 12, color: '#6A6D7C' },
-];
-
-interface IncidentRow {
-  id: string;
-  rootCause: string;
-  severity: 'High' | 'Medium' | 'Low';
-  status: 'In Progress' | 'Resolved' | 'Open';
-  occurredAt: string;
-}
-
-const INCIDENTS_RAW: IncidentRow[] = [
-  { id: 'INC-1024', rootCause: 'Interface congestion', severity: 'High', status: 'In Progress', occurredAt: 'Aug 29, 14:02' },
-  { id: 'INC-1023', rootCause: 'DNS resolution failure', severity: 'Medium', status: 'Resolved', occurredAt: 'Aug 29, 11:47' },
-  { id: 'INC-1022', rootCause: 'High CPU usage', severity: 'Medium', status: 'Resolved', occurredAt: 'Aug 28, 18:16' },
-  { id: 'INC-1021', rootCause: 'BGP peer session flap', severity: 'High', status: 'Resolved', occurredAt: 'Aug 28, 09:12' },
-  { id: 'INC-1020', rootCause: 'Wi-Fi interference on East AP', severity: 'Low', status: 'Resolved', occurredAt: 'Aug 27, 22:30' },
+  { name: 'Other', value: 10, color: '#6A6D7C' },
 ];
 
 export function IncidentHistoryPage() {
-  const [severityFilter, setSeverityFilter] = useState('All');
+  const [severityFilter, setSeverityFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
-
-  const filtered = INCIDENTS_RAW.filter((inc) => {
-    const matchesSev = severityFilter === 'All' || inc.severity === severityFilter;
-    const matchesSearch =
-      inc.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      inc.rootCause.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesSev && matchesSearch;
-  });
 
   return (
     <AppLayout>
@@ -91,7 +68,7 @@ export function IncidentHistoryPage() {
                   cursor: 'pointer',
                 }}
               >
-                <option value="All">All Severity</option>
+                <option value="all">All Severity</option>
                 <option value="High">High Severity</option>
                 <option value="Medium">Medium Severity</option>
                 <option value="Low">Low Severity</option>
@@ -134,87 +111,98 @@ export function IncidentHistoryPage() {
                   color: '#F5F5F7',
                   fontSize: '12px',
                   outline: 'none',
+                  boxSizing: 'border-box',
                 }}
               />
             </div>
           </div>
         </div>
 
-        {/* 4 KPI Summary Cards (Exact Reference Match) */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '14px' }}>
-          <GlassCard variant="default" style={{ padding: '16px' }}>
-            <div style={{ fontSize: '28px', fontWeight: 800, color: '#F5F5F7' }}>124</div>
-            <div style={{ fontSize: '12px', color: '#A3A6B3' }}>Total Incidents</div>
+        {/* 4 Summary Metric Cards (Exact Reference Match) */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
+          <GlassCard variant="default" style={{ padding: '16px 20px' }}>
+            <div style={{ fontSize: '28px', fontWeight: 800, color: '#F5F5F7', lineHeight: 1 }}>124</div>
+            <div style={{ fontSize: '12px', color: '#A3A6B3', marginTop: '6px' }}>Total Incidents</div>
           </GlassCard>
 
-          <GlassCard variant="default" style={{ padding: '16px' }}>
-            <div style={{ fontSize: '28px', fontWeight: 800, color: '#10B981' }}>48%</div>
-            <div style={{ fontSize: '12px', color: '#A3A6B3' }}>Resolved</div>
+          <GlassCard variant="default" style={{ padding: '16px 20px' }}>
+            <div style={{ fontSize: '28px', fontWeight: 800, color: '#10B981', lineHeight: 1 }}>48%</div>
+            <div style={{ fontSize: '12px', color: '#A3A6B3', marginTop: '6px' }}>Resolved</div>
           </GlassCard>
 
-          <GlassCard variant="default" style={{ padding: '16px' }}>
-            <div style={{ fontSize: '28px', fontWeight: 800, color: '#A855F7' }}>32%</div>
-            <div style={{ fontSize: '12px', color: '#A3A6B3' }}>In Progress</div>
+          <GlassCard variant="default" style={{ padding: '16px 20px' }}>
+            <div style={{ fontSize: '28px', fontWeight: 800, color: '#A855F7', lineHeight: 1 }}>32%</div>
+            <div style={{ fontSize: '12px', color: '#A3A6B3', marginTop: '6px' }}>In-Progress</div>
           </GlassCard>
 
-          <GlassCard variant="default" style={{ padding: '16px' }}>
-            <div style={{ fontSize: '28px', fontWeight: 800, color: '#FF7A18' }}>20%</div>
-            <div style={{ fontSize: '12px', color: '#A3A6B3' }}>Open</div>
+          <GlassCard variant="default" style={{ padding: '16px 20px' }}>
+            <div style={{ fontSize: '28px', fontWeight: 800, color: '#FF7A18', lineHeight: 1 }}>20%</div>
+            <div style={{ fontSize: '12px', color: '#A3A6B3', marginTop: '6px' }}>Open</div>
           </GlassCard>
         </div>
 
-        {/* 2 Charts Row: Incident Trend & Root Cause Donut (Exact Reference Match) */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 360px', gap: '20px' }}>
+        {/* Middle Row: Trend Chart & Donut Chart (Exact Reference Match) */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.2fr) minmax(0, 1fr)', gap: '20px' }}>
           {/* Incident Trend (Last 30 Days) */}
           <GlassCard variant="default" style={{ padding: '20px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
-              <h3 style={{ fontSize: '14px', fontWeight: 700, color: '#F5F5F7' }}>Incident Trend (Last 30 Days)</h3>
-              <span style={{ fontSize: '11px', color: '#A855F7' }}>Peak: Aug 29 (+12)</span>
-            </div>
-            <div style={{ width: '100%', height: '180px' }}>
+            <h3 style={{ fontSize: '14px', fontWeight: 700, color: '#F5F5F7', marginBottom: '14px' }}>
+              Incident Trend (Last 30 Days)
+            </h3>
+            <div style={{ width: '100%', height: '170px' }}>
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={TREND_DATA}>
                   <defs>
-                    <linearGradient id="trend-fill" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#A855F7" stopOpacity="0.4" />
-                      <stop offset="100%" stopColor="#A855F7" stopOpacity="0.0" />
+                    <linearGradient id="purpleArea" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#A855F7" stopOpacity={0.6} />
+                      <stop offset="95%" stopColor="#A855F7" stopOpacity={0} />
                     </linearGradient>
                   </defs>
-                  <Tooltip contentStyle={{ background: '#11131A', border: '1px solid #A855F7', fontSize: '11px', borderRadius: '6px' }} />
-                  <Area type="monotone" dataKey="count" stroke="#A855F7" strokeWidth={2.5} fill="url(#trend-fill)" />
+                  <Tooltip contentStyle={{ background: '#11131A', border: '1px solid #A855F7', fontSize: '12px', borderRadius: '6px' }} />
+                  <Area type="monotone" dataKey="count" stroke="#A855F7" strokeWidth={2.5} fillOpacity={1} fill="url(#purpleArea)" />
                 </AreaChart>
               </ResponsiveContainer>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', color: '#6A6D7C', marginTop: '4px' }}>
+              <span>Aug 1</span>
+              <span>Aug 8</span>
+              <span>Aug 15</span>
+              <span>Aug 22</span>
+              <span>Aug 29</span>
             </div>
           </GlassCard>
 
           {/* Root Cause Distribution Donut Chart */}
           <GlassCard variant="default" style={{ padding: '20px' }}>
-            <h3 style={{ fontSize: '14px', fontWeight: 700, color: '#F5F5F7', marginBottom: '10px' }}>Root Cause Distribution</h3>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              {/* Donut Canvas */}
-              <div style={{ position: 'relative', width: '130px', height: '130px' }}>
+            <h3 style={{ fontSize: '14px', fontWeight: 700, color: '#F5F5F7', marginBottom: '14px' }}>
+              Root Cause Distribution
+            </h3>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
+              {/* Donut Chart with Total Counter in Center */}
+              <div style={{ position: 'relative', width: '150px', height: '150px', flexShrink: 0 }}>
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
-                    <Pie data={DONUT_DATA} innerRadius={42} outerRadius={60} dataKey="value" stroke="none">
-                      {DONUT_DATA.map((entry) => (
-                        <Cell key={entry.name} fill={entry.color} />
+                    <Pie data={DONUT_DATA} innerRadius={44} outerRadius={66} dataKey="value" stroke="none">
+                      {DONUT_DATA.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
                       ))}
                     </Pie>
                   </PieChart>
                 </ResponsiveContainer>
                 <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                  <span style={{ fontSize: '16px', fontWeight: 800, color: '#F5F5F7' }}>124</span>
-                  <span style={{ fontSize: '9px', color: '#A3A6B3', textTransform: 'uppercase' }}>Incidents</span>
+                  <span style={{ fontSize: '18px', fontWeight: 800, color: '#F5F5F7', lineHeight: 1 }}>124</span>
+                  <span style={{ fontSize: '9px', color: '#A3A6B3' }}>Incidents</span>
                 </div>
               </div>
 
               {/* Donut Legend */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '11px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '11px', flex: 1 }}>
                 {DONUT_DATA.map((item) => (
-                  <div key={item.name} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: item.color }} />
-                    <span style={{ color: '#F5F5F7' }}>{item.name}</span>
-                    <span style={{ color: '#A3A6B3', marginLeft: 'auto', fontWeight: 600 }}>{item.value}%</span>
+                  <div key={item.name} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span style={{ width: '8px', height: '8px', borderRadius: '2px', backgroundColor: item.color }} />
+                      <span style={{ color: '#A3A6B3' }}>{item.name}</span>
+                    </div>
+                    <span style={{ fontWeight: 700, color: '#F5F5F7' }}>{item.value}%</span>
                   </div>
                 ))}
               </div>
@@ -222,72 +210,8 @@ export function IncidentHistoryPage() {
           </GlassCard>
         </div>
 
-        {/* Incident Table (Exact Reference Match) */}
-        <GlassCard variant="default" style={{ padding: '20px' }}>
-          <h3 style={{ fontSize: '14px', fontWeight: 700, color: '#F5F5F7', marginBottom: '14px' }}>Incident Registry</h3>
-          <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '12px' }}>
-              <thead>
-                <tr style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.08)', color: '#A3A6B3', fontSize: '11px', textTransform: 'uppercase' }}>
-                  <th style={{ padding: '10px 14px' }}>ID</th>
-                  <th style={{ padding: '10px 14px' }}>Root Cause</th>
-                  <th style={{ padding: '10px 14px' }}>Severity</th>
-                  <th style={{ padding: '10px 14px' }}>Status</th>
-                  <th style={{ padding: '10px 14px' }}>Occurred At</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.map((row) => (
-                  <tr
-                    key={row.id}
-                    style={{
-                      borderBottom: '1px solid rgba(255, 255, 255, 0.04)',
-                      transition: 'background 0.15s',
-                    }}
-                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.03)')}
-                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
-                  >
-                    <td style={{ padding: '12px 14px', fontWeight: 700, color: '#38D9FF', fontFamily: 'monospace' }}>
-                      {row.id}
-                    </td>
-                    <td style={{ padding: '12px 14px', color: '#F5F5F7', fontWeight: 500 }}>
-                      {row.rootCause}
-                    </td>
-                    <td style={{ padding: '12px 14px' }}>
-                      <span
-                        style={{
-                          fontSize: '11px',
-                          fontWeight: 700,
-                          padding: '2px 8px',
-                          borderRadius: '4px',
-                          background: row.severity === 'High' ? 'rgba(255, 77, 77, 0.15)' : 'rgba(255, 179, 71, 0.15)',
-                          color: row.severity === 'High' ? '#FF4D4D' : '#FFB347',
-                          border: `1px solid ${row.severity === 'High' ? 'rgba(255, 77, 77, 0.4)' : 'rgba(255, 179, 71, 0.4)'}`,
-                        }}
-                      >
-                        {row.severity}
-                      </span>
-                    </td>
-                    <td style={{ padding: '12px 14px' }}>
-                      <span
-                        style={{
-                          fontSize: '11px',
-                          fontWeight: 600,
-                          color: row.status === 'Resolved' ? '#10B981' : '#A855F7',
-                        }}
-                      >
-                        {row.status}
-                      </span>
-                    </td>
-                    <td style={{ padding: '12px 14px', color: '#A3A6B3', fontFamily: 'monospace', fontSize: '11px' }}>
-                      {row.occurredAt}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </GlassCard>
+        {/* Incident Table Component */}
+        <IncidentTable searchQuery={searchQuery} selectedSeverity={severityFilter} />
       </div>
     </AppLayout>
   );

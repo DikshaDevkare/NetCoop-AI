@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { AppLayout } from '../../components/layout/AppLayout.tsx';
 import { GlassCard } from '../../components/ui/GlassCard.tsx';
 import { GlowButton } from '../../components/ui/GlowButton.tsx';
+import { FileUploadPanel } from '../../components/ui/FileUploadPanel.tsx';
 import {
   Activity,
   Split,
@@ -10,18 +11,9 @@ import {
   Cpu,
   Wifi,
   Sliders,
-  UploadCloud,
   CheckCircle2,
-  FileText,
   ArrowRight,
-  Trash2,
 } from 'lucide-react';
-
-interface UploadedFile {
-  name: string;
-  size: string;
-  type: string;
-}
 
 export function NewDiagnosisPage() {
   const navigate = useNavigate();
@@ -29,12 +21,6 @@ export function NewDiagnosisPage() {
   const [activeStep, setActiveStep] = useState(1);
   const [selectedScenario, setSelectedScenario] = useState('congestion');
   const [isRunning, setIsRunning] = useState(false);
-
-  const [files, setFiles] = useState<UploadedFile[]>([
-    { name: 'site-a_telemetry.csv', size: '2.4 MB', type: 'CSV Telemetry' },
-    { name: 'interfaces.json', size: '532 KB', type: 'SNMP Interfaces' },
-    { name: 'topology.json', size: '1.1 MB', type: 'BGP Graph' },
-  ]);
 
   const scenarios = [
     {
@@ -75,25 +61,10 @@ export function NewDiagnosisPage() {
     },
   ];
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      const newFiles: UploadedFile[] = Array.from(e.target.files).map((f) => ({
-        name: f.name,
-        size: `${(f.size / (1024 * 1024)).toFixed(1)} MB`,
-        type: 'Telemetry Ingress',
-      }));
-      setFiles((prev) => [...prev, ...newFiles]);
-    }
-  };
-
-  const removeFile = (index: number) => {
-    setFiles((prev) => prev.filter((_, i) => i !== index));
-  };
-
   const handleRunDiagnosis = async () => {
     setIsRunning(true);
     setActiveStep(4);
-    await new Promise((r) => setTimeout(r, 1400));
+    await new Promise((r) => setTimeout(r, 1200));
     navigate('/incident-details');
   };
 
@@ -118,7 +89,7 @@ export function NewDiagnosisPage() {
               alignItems: 'center',
               gap: '12px',
               background: 'rgba(25, 28, 38, 0.7)',
-              padding: '6px 16px',
+              padding: '8px 16px',
               borderRadius: '9999px',
               border: '1px solid rgba(255, 255, 255, 0.08)',
             }}
@@ -128,71 +99,67 @@ export function NewDiagnosisPage() {
               { num: 2, label: 'Telemetry' },
               { num: 3, label: 'Validate' },
               { num: 4, label: 'Run' },
-            ].map((st, i) => {
-              const isPast = activeStep >= st.num;
-              return (
-                <div key={st.num} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <div
-                    style={{
-                      width: '24px',
-                      height: '24px',
-                      borderRadius: '50%',
-                      background: isPast
-                        ? 'linear-gradient(135deg, #FF9436, #FF7A18)'
-                        : 'rgba(255, 255, 255, 0.08)',
-                      color: isPast ? '#FFFFFF' : '#A3A6B3',
-                      fontSize: '11px',
-                      fontWeight: 700,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      boxShadow: isPast ? '0 0 10px rgba(255, 122, 24, 0.5)' : 'none',
-                    }}
-                  >
-                    {st.num}
-                  </div>
-                  <span style={{ fontSize: '12px', fontWeight: 600, color: isPast ? '#F5F5F7' : '#A3A6B3' }}>
-                    {st.label}
-                  </span>
-                  {i < 3 && <div style={{ width: '16px', height: '1px', background: 'rgba(255, 255, 255, 0.12)' }} />}
+            ].map((step, idx) => (
+              <div key={step.num} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div
+                  style={{
+                    width: '24px',
+                    height: '24px',
+                    borderRadius: '50%',
+                    backgroundColor: activeStep >= step.num ? '#FF7A18' : '#2A2E3D',
+                    color: '#FFFFFF',
+                    fontSize: '11px',
+                    fontWeight: 700,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    boxShadow: activeStep >= step.num ? '0 0 10px rgba(255, 122, 24, 0.5)' : 'none',
+                  }}
+                >
+                  {step.num}
                 </div>
-              );
-            })}
+                <span
+                  style={{
+                    fontSize: '12px',
+                    fontWeight: activeStep >= step.num ? 600 : 500,
+                    color: activeStep >= step.num ? '#F5F5F7' : '#6A6D7C',
+                  }}
+                >
+                  {step.label}
+                </span>
+                {idx < 3 && <span style={{ color: '#3A3E4D', margin: '0 4px' }}>—</span>}
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* Main 2-Column Split: Scenarios on Left, Dropzone on Right */}
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))',
-            gap: '24px',
-            alignItems: 'start',
-          }}
-        >
-          {/* Left Column: 6 Scenario Cards */}
+        {/* Main Grid: 6 Scenarios on Left, File Upload on Right (Exact Reference Match) */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.2fr) minmax(0, 1fr)', gap: '24px' }}>
+          {/* Choose Diagnostic Scenario */}
           <div>
             <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#F5F5F7', marginBottom: '14px' }}>
               Choose Diagnostic Scenario
             </h3>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '14px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
               {scenarios.map((sc) => {
                 const isSelected = selectedScenario === sc.id;
+                const IconComponent = sc.icon;
                 return (
-                  <GlassCard
+                  <div
                     key={sc.id}
-                    variant={isSelected ? 'accent' : 'default'}
-                    hoverable
                     onClick={() => {
                       setSelectedScenario(sc.id);
-                      if (activeStep < 2) setActiveStep(2);
+                      setActiveStep(2);
                     }}
                     style={{
-                      padding: '20px 16px',
-                      cursor: 'pointer',
+                      padding: '18px 14px',
+                      borderRadius: '12px',
+                      backgroundColor: isSelected ? 'rgba(255, 122, 24, 0.1)' : 'rgba(25, 28, 38, 0.65)',
                       border: isSelected ? '1px solid #FF7A18' : '1px solid rgba(255, 255, 255, 0.08)',
-                      boxShadow: isSelected ? '0 0 20px -2px rgba(255, 122, 24, 0.35)' : 'none',
+                      boxShadow: isSelected ? '0 0 20px rgba(255, 122, 24, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2)' : 'none',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
                       display: 'flex',
                       flexDirection: 'column',
                       alignItems: 'center',
@@ -202,168 +169,82 @@ export function NewDiagnosisPage() {
                   >
                     <div
                       style={{
-                        width: '42px',
-                        height: '42px',
+                        width: '40px',
+                        height: '40px',
                         borderRadius: '10px',
-                        background: isSelected ? 'rgba(255, 122, 24, 0.2)' : 'rgba(255, 255, 255, 0.04)',
-                        color: isSelected ? '#FF7A18' : '#A3A6B3',
+                        backgroundColor: isSelected ? '#FF7A18' : 'rgba(255, 255, 255, 0.05)',
+                        color: isSelected ? '#FFFFFF' : '#A3A6B3',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
+                        boxShadow: isSelected ? '0 0 14px rgba(255, 122, 24, 0.5)' : 'none',
                       }}
                     >
-                      <sc.icon size={22} />
+                      <IconComponent size={20} />
                     </div>
-
-                    <div>
-                      <div style={{ fontSize: '13px', fontWeight: 700, color: isSelected ? '#FFB347' : '#F5F5F7' }}>
-                        {sc.title}
-                      </div>
-                      <div style={{ fontSize: '11px', color: '#A3A6B3', marginTop: '4px', lineHeight: 1.4 }}>
-                        {sc.desc}
-                      </div>
+                    <div style={{ fontSize: '13px', fontWeight: 700, color: '#F5F5F7' }}>
+                      {sc.title}
                     </div>
-                  </GlassCard>
+                  </div>
                 );
               })}
             </div>
           </div>
 
-          {/* Right Column: File Dropzone & Uploaded List */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            {/* Drag & Drop Area */}
-            <div
-              style={{
-                borderRadius: '14px',
-                border: '2px dashed rgba(255, 122, 24, 0.4)',
-                background: 'rgba(25, 28, 38, 0.5)',
-                padding: '36px 20px',
-                textAlign: 'center',
-                position: 'relative',
-                cursor: 'pointer',
-                transition: 'border-color 0.2s',
-              }}
-            >
-              <input
-                type="file"
-                multiple
-                onChange={handleFileUpload}
-                style={{
-                  position: 'absolute',
-                  inset: 0,
-                  opacity: 0,
-                  cursor: 'pointer',
-                }}
-              />
-              <div
-                style={{
-                  width: '52px',
-                  height: '52px',
-                  borderRadius: '12px',
-                  background: 'rgba(255, 122, 24, 0.15)',
-                  color: '#FF7A18',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  margin: '0 auto 14px',
-                }}
-              >
-                <UploadCloud size={28} />
-              </div>
-
-              <div style={{ fontSize: '15px', fontWeight: 700, color: '#F5F5F7', marginBottom: '6px' }}>
-                Drag & drop telemetry files here
-              </div>
-              <div style={{ fontSize: '12px', color: '#FFB347', marginBottom: '4px' }}>
-                or browse files from system
-              </div>
-              <div style={{ fontSize: '11px', color: '#A3A6B3' }}>
-                Supported: PCAP, CSV, JSON, NetFlow v9 / IPFIX
-              </div>
-            </div>
-
-            {/* Uploaded File List */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              {files.map((file, idx) => (
-                <div
-                  key={file.name}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    padding: '10px 14px',
-                    borderRadius: '8px',
-                    background: 'rgba(17, 19, 26, 0.8)',
-                    border: '1px solid rgba(255, 255, 255, 0.08)',
-                  }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <FileText size={16} color="#38D9FF" />
-                    <span style={{ fontSize: '13px', fontWeight: 600, color: '#F5F5F7' }}>{file.name}</span>
-                    <span style={{ fontSize: '11px', color: '#A3A6B3' }}>({file.size})</span>
-                  </div>
-
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <span style={{ fontSize: '11px', color: '#10B981', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <CheckCircle2 size={14} /> Ready
-                    </span>
-                    <button
-                      onClick={() => removeFile(idx)}
-                      style={{ background: 'transparent', border: 'none', color: '#A3A6B3', cursor: 'pointer' }}
-                    >
-                      <Trash2 size={14} />
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
+          {/* Right Column: File Upload Panel */}
+          <div>
+            <FileUploadPanel onFilesChange={() => setActiveStep(3)} />
           </div>
         </div>
 
-        {/* Bottom Bar: Data Validation + Run Diagnosis Button (Exact Reference Match) */}
+        {/* Bottom Bar: Data Validation + Run Diagnosis (Exact Reference Match) */}
         <GlassCard
           variant="default"
           style={{
-            padding: '20px 24px',
+            padding: '16px 24px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
             flexWrap: 'wrap',
             gap: '16px',
-            borderTop: '1px solid rgba(255, 122, 24, 0.3)',
           }}
         >
-          {/* Data Validation Checkmarks */}
+          {/* Data Validation Checkpoints */}
           <div>
-            <div style={{ fontSize: '12px', fontWeight: 700, color: '#A3A6B3', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '8px' }}>
+            <div style={{ fontSize: '11px', fontWeight: 600, color: '#A3A6B3', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '8px' }}>
               Data Validation
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '18px', flexWrap: 'wrap' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: '#F5F5F7' }}>
-                <CheckCircle2 size={15} color="#10B981" />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '20px', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: '#10B981', fontWeight: 600 }}>
+                <CheckCircle2 size={16} />
                 <span>Schema compatible</span>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: '#F5F5F7' }}>
-                <CheckCircle2 size={15} color="#10B981" />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: '#10B981', fontWeight: 600 }}>
+                <CheckCircle2 size={16} />
                 <span>Required fields present</span>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: '#F5F5F7' }}>
-                <CheckCircle2 size={15} color="#10B981" />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: '#10B981', fontWeight: 600 }}>
+                <CheckCircle2 size={16} />
                 <span>No missing telemetry</span>
               </div>
             </div>
           </div>
 
-          {/* Launch Button */}
+          {/* Glowing Orange Run Diagnosis Button */}
           <GlowButton
             variant="primary"
             size="lg"
+            onClick={handleRunDiagnosis}
             loading={isRunning}
             icon={ArrowRight}
             iconPosition="right"
-            onClick={handleRunDiagnosis}
+            style={{
+              padding: '12px 28px',
+              fontSize: '14px',
+              fontWeight: 700,
+            }}
           >
-            Run Diagnosis
+            {isRunning ? 'Synthesizing...' : 'Run Diagnosis'}
           </GlowButton>
         </GlassCard>
       </div>
