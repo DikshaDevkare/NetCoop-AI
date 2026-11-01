@@ -94,6 +94,72 @@ def test_get_registered_models_endpoint(client: TestClient) -> None:
     assert "Sequence Temporal Pattern Analyzer" in model_names
 
 
+def test_get_system_status_endpoint(client: TestClient) -> None:
+    response = client.get("/api/system/status")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["api_status"] == "healthy"
+    assert data["database_status"] == "connected"
+    assert data["protocol_version"] == "1.0"
+    assert len(data["models"]) == 3
+    assert len(data["agents"]) == 5
+
+
+def test_diagnosis_history_and_detail_endpoints(client: TestClient) -> None:
+    # 1. Trigger diagnosis
+    payload = {
+        "incident_id": "INC-HIST-01",
+        "telemetry_records": [
+            {
+                "device_id": "SW-CORE-HIST-01",
+                "device_type": "switch",
+                "latency_ms": 190.0,
+                "packet_loss_pct": 3.5,
+                "jitter_ms": 30.0,
+                "throughput_mbps": 950.0,
+                "bandwidth_utilization_pct": 94.0,
+                "cpu_usage_pct": 45.0,
+                "memory_usage_pct": 50.0,
+                "queue_drops": 400,
+                "interface_errors": 0,
+                "retransmissions": 60,
+            }
+        ],
+    }
+    diag_res = client.post("/api/diagnosis/analyze", json=payload)
+    assert diag_res.status_code == 200
+    diag_id = diag_res.json()["diagnosis_id"]
+
+    # 2. Query history
+    hist_res = client.get("/api/diagnosis/history?page=1&page_size=20")
+    assert hist_res.status_code == 200
+    data = hist_res.json()
+    assert data["total"] >= 1
+    assert any(item["diagnosis_id"] == diag_id for item in data["items"])
+
+    # 3. Query diagnosis detail
+    rec_res = client.get(f"/api/diagnosis/{diag_id}")
+    assert rec_res.status_code == 200
+    assert rec_res.json()["diagnosis_id"] == diag_id
+
+    # 4. Query diagnosis report
+    rep_res = client.get(f"/api/diagnosis/{diag_id}/report")
+    assert rep_res.status_code == 200
+    assert rep_res.json()["incident_summary"]["incident_id"] == "INC-HIST-01"
+
+
+def test_cors_preflight_headers(client: TestClient) -> None:
+    response = client.options(
+        "/api/diagnosis/analyze",
+        headers={
+            "Origin": "http://localhost:5173",
+            "Access-Control-Request-Method": "POST",
+        },
+    )
+    assert response.status_code == 200
+    assert response.headers.get("access-control-allow-origin") == "http://localhost:5173"
+
+
 # ==============================================================================
 # Phase 1 and Phase 2 Regression Checks
 # ==============================================================================

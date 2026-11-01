@@ -21,7 +21,8 @@ class Settings(BaseSettings):
     DEBUG: bool = True
     API_PREFIX: str = "/api"
     LOG_LEVEL: str = "INFO"
-    ALLOWED_ORIGINS: str = "http://localhost:5173"
+    ALLOWED_ORIGINS: str = "http://localhost:5173,http://127.0.0.1:5173"
+    DATABASE_URL: str = "sqlite:///./netcoop.db"
 
     model_config = SettingsConfigDict(
         env_file=".env",

@@ -82,8 +82,11 @@ def hardware_failure_df() -> pd.DataFrame:
 def test_telemetry_performance_agent_normal(normal_telemetry_df: pd.DataFrame) -> None:
     agent = TelemetryPerformanceAgent()
     msgs = agent.analyze(normal_telemetry_df, context={"incident_id": "INC-01"})
-    # Normal data produces no anomalous evidence or findings
-    assert len(msgs) == 0
+    # Normal data produces a meaningful informational finding affirming healthy baseline
+    assert len(msgs) == 1
+    assert msgs[0].message_type == MessageType.DIAGNOSTIC_FINDING
+    assert msgs[0].payload.severity == Severity.INFORMATIONAL
+    assert "Nominal" in msgs[0].payload.title
 
 
 def test_telemetry_performance_agent_congestion(congestion_telemetry_df: pd.DataFrame) -> None:
@@ -115,9 +118,37 @@ def test_infrastructure_health_agent_hardware_failure(hardware_failure_df: pd.Da
 
 def test_connectivity_agent_missing_rssi_on_wired_switch_is_normal(normal_telemetry_df: pd.DataFrame) -> None:
     agent = ConnectivityAnalysisAgent()
-    # On a wired switch, missing wireless RSSI must NOT produce a fault
+    # On a wired switch, missing wireless RSSI must NOT produce a fault; produces nominal connectivity finding
     msgs = agent.analyze(normal_telemetry_df, context={"incident_id": "INC-01"})
-    assert len(msgs) == 0
+    assert len(msgs) == 1
+    assert msgs[0].message_type == MessageType.DIAGNOSTIC_FINDING
+    assert msgs[0].payload.severity == Severity.INFORMATIONAL
+    assert "Nominal" in msgs[0].payload.title
+
+
+def test_infrastructure_health_agent_normal(normal_telemetry_df: pd.DataFrame) -> None:
+    agent = InfrastructureHealthAgent()
+    msgs = agent.analyze(normal_telemetry_df, context={"incident_id": "INC-01"})
+    assert len(msgs) == 1
+    assert msgs[0].message_type == MessageType.DIAGNOSTIC_FINDING
+    assert msgs[0].payload.severity == Severity.INFORMATIONAL
+    assert "Hardware Nominal" in msgs[0].payload.title
+
+
+def test_infrastructure_health_nan_resilience() -> None:
+    nan_df = pd.DataFrame([{
+        "incident_id": "INC-NAN",
+        "device_id": "SW-TEST-01",
+        "device_type": "switch",
+        "latency_ms": None,
+        "interface_errors": float("nan"),
+        "cpu_usage_pct": float("nan"),
+    }])
+    agent = InfrastructureHealthAgent()
+    # Must execute safely without raising ValueError on float NaN
+    msgs = agent.analyze(nan_df, context={"incident_id": "INC-NAN"})
+    assert len(msgs) == 1
+    assert msgs[0].payload.severity == Severity.INFORMATIONAL
 
 
 def test_connectivity_agent_weak_wifi() -> None:
@@ -183,3 +214,51 @@ def test_recommendation_reporting_agent_generates_plan() -> None:
     assert report["incident_summary"]["incident_id"] == "INC-02"
     assert len(report["recommended_corrective_actions"]) >= 2
     assert report["probable_root_cause"]["primary_hypothesis"] == correlation_result["primary_hypothesis"]
+    # Verify supporting evidence IDs are linked
+    for action in report["recommended_corrective_actions"]:
+        assert "supporting_evidence_ids" in action
+        assert "EVD-01" in action["supporting_evidence_ids"]
+        assert action["automated"] is False
+
+
+def test_fault_correlation_handles_competing_hypotheses() -> None:
+    corr_agent = FaultCorrelationAgent()
+    # Mock two conflicting agent findings: Hardware lockup vs Congestion
+    finding_1 = corr_agent.create_finding(
+        incident_id="INC-CONFLICT",
+        title="Hardware Processing Lockup",
+        description="CPU at 99%",
+        severity=Severity.CRITICAL,
+        confidence=ConfidenceLevel.HIGH,
+        affected_devices=["SW-CORE-01"],
+        suspected_cause="Device Hardware Failure or Control Plane CPU Lockup",
+    )
+    finding_2 = corr_agent.create_finding(
+        incident_id="INC-CONFLICT",
+        title="Network Link Congestion",
+        description="Buffer queue drops",
+        severity=Severity.HIGH,
+        confidence=ConfidenceLevel.HIGH,
+        affected_devices=["SW-CORE-01"],
+        suspected_cause="Network link congestion / throughput bottleneck",
+    )
+    msg1 = corr_agent.create_message(
+        receiver=AgentId.FAULT_CORRELATION,
+        message_type=MessageType.DIAGNOSTIC_FINDING,
+        correlation_id="INC-CONFLICT",
+        payload=finding_1,
+    )
+    msg2 = corr_agent.create_message(
+        receiver=AgentId.FAULT_CORRELATION,
+        message_type=MessageType.DIAGNOSTIC_FINDING,
+        correlation_id="INC-CONFLICT",
+        payload=finding_2,
+    )
+    res = corr_agent.engine.correlate(
+        agent_messages=[msg1, msg2],
+        incident_id="INC-CONFLICT",
+    )
+    # Conflict detected and confidence adjusted
+    assert len(res["conflicting_evidence"]) > 0
+    assert any(c["type"] == "competing_hypotheses" for c in res["conflicting_evidence"])
+    assert res["confidence"] in (ConfidenceLevel.MEDIUM, ConfidenceLevel.LOW)

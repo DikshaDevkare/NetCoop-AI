@@ -187,4 +187,12 @@ class RecommendationEngine:
                 "step_order": 1,
             })
 
+        # Attach supporting evidence IDs and operational advisory metadata
+        evd_ids = [str(e.get("evidence_id")) for e in evidence_items if e.get("evidence_id")]
+        for r in recs:
+            if "supporting_evidence_ids" not in r:
+                r["supporting_evidence_ids"] = evd_ids[:3]
+            if "automated" not in r:
+                r["automated"] = False
+
         return recs

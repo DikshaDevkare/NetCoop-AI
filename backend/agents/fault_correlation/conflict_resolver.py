@@ -22,7 +22,14 @@ class ConflictResolver:
         Analyzes findings for competing root-cause hypotheses, assesses evidence alignment,
         and derives an uncertainty penalty.
         """
-        causes = [f.get("suspected_cause") for f in findings if f.get("suspected_cause")]
+        # Filter for actual fault hypotheses (excluding informational/nominal baseline findings)
+        fault_findings = [
+            f for f in findings
+            if f.get("suspected_cause")
+            and str(f.get("severity", "")).lower() not in ("severity.informational", "informational")
+            and "normal" not in str(f.get("suspected_cause", "")).lower()
+        ]
+        causes = [f.get("suspected_cause") for f in fault_findings if f.get("suspected_cause")]
         unique_causes = list(set(causes))
 
         conflicts: List[Dict[str, Any]] = []

@@ -48,12 +48,16 @@ class DiagnosisRequest(BaseModel):
 
 class IncidentSummary(BaseModel):
     incident_id: str
+    diagnosis_id: Optional[str] = Field(None, description="Unique diagnosis run correlation identifier.")
     timestamp: str
     overall_status: str
     severity: str
     affected_devices: List[str]
     affected_device_count: int
     affected_network_segments: List[str]
+    topology_scope: Optional[str] = Field(None, description="Scope of fault: device_local, shared_infrastructure, segment_wide.")
+    is_shared_infrastructure_fault: Optional[bool] = Field(None, description="Whether multiple devices share common root cause.")
+    scope_summary: Optional[str] = Field(None, description="Topology scoping narrative.")
 
 
 class ProbableRootCause(BaseModel):
@@ -69,6 +73,14 @@ class ActionRecommendation(BaseModel):
     target_devices: List[str]
     rationale: str
     step_order: int
+    supporting_evidence_ids: List[str] = Field(
+        default_factory=list,
+        description="List of empirical evidence identifiers supporting this recommendation.",
+    )
+    automated: bool = Field(
+        False,
+        description="Whether this remediation action is automated or requires manual engineer execution.",
+    )
 
 
 class DiagnosisResponse(BaseModel):
@@ -77,6 +89,7 @@ class DiagnosisResponse(BaseModel):
     agent findings, and actionable remediation recommendations.
     """
 
+    diagnosis_id: Optional[str] = Field(None, description="Unique diagnosis execution record identifier.")
     incident_summary: IncidentSummary
     probable_root_cause: ProbableRootCause
     machine_learning_signals: Dict[str, Any]
@@ -117,3 +130,23 @@ class ModelInfo(BaseModel):
 class ModelsListResponse(BaseModel):
     total_models: int
     models: List[ModelInfo]
+
+
+class DiagnosisHistoryItem(BaseModel):
+    diagnosis_id: str
+    incident_id: str
+    primary_hypothesis: str
+    confidence: str
+    severity: str
+    overall_status: str
+    affected_devices: List[str]
+    affected_segments: List[str]
+    temporal_trend: Optional[str] = None
+    created_at: str
+
+
+class DiagnosisHistoryResponse(BaseModel):
+    total: int
+    page: int
+    page_size: int
+    items: List[DiagnosisHistoryItem]

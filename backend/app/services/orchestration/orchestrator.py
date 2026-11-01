@@ -54,6 +54,7 @@ class MultiAgentOrchestrator:
         telemetry: Union[pd.DataFrame, List[Dict[str, Any]], Dict[str, Any]],
         incident_id: Optional[str] = None,
         context: Optional[Dict[str, Any]] = None,
+        db: Optional[Any] = None,
     ) -> Dict[str, Any]:
         """
         Executes end-to-end multi-agent network fault diagnosis.
@@ -62,11 +63,13 @@ class MultiAgentOrchestrator:
             telemetry: Telemetry records as DataFrame, list of dicts, or single dict.
             incident_id: Optional incident correlation ID. Generated if omitted.
             context: Optional diagnostic context or user parameters.
+            db: Optional SQLAlchemy Session for persisting diagnosis and telemetry.
 
         Returns:
             Unified diagnostic report conforming to NetCoop AI interoperability protocol.
         """
         inc_id = incident_id or f"INC-{uuid.uuid4().hex[:8].upper()}"
+        diag_id = f"DIAG-{uuid.uuid4().hex[:8].upper()}"
         start_time = datetime.now(timezone.utc)
         logger.info("Initiating multi-agent diagnosis for incident %s", inc_id)
 
@@ -238,9 +241,20 @@ class MultiAgentOrchestrator:
             }
 
         # -------------------------------------------------------------
-        # STEP 7: Attach Metadata and Return
+        # STEP 7: Attach Metadata, Topology Scoping, and Return
         # -------------------------------------------------------------
         total_duration_ms = round((datetime.now(timezone.utc) - start_time).total_seconds() * 1000, 2)
+        final_report["diagnosis_id"] = diag_id
+        if "incident_summary" in final_report:
+            final_report["incident_summary"]["diagnosis_id"] = diag_id
+
+            from app.services.topology import CampusTopologyService
+            affected_devs = final_report["incident_summary"].get("affected_devices", [])
+            scope_analysis = CampusTopologyService.analyze_fault_scope(affected_devs)
+            final_report["incident_summary"]["topology_scope"] = scope_analysis["scope"]
+            final_report["incident_summary"]["is_shared_infrastructure_fault"] = scope_analysis["is_shared_infrastructure_fault"]
+            final_report["incident_summary"]["scope_summary"] = scope_analysis["summary"]
+
         final_report["orchestration_metadata"] = {
             "orchestrator_version": "1.0.0",
             "protocol_version": "1.0",
@@ -250,7 +264,19 @@ class MultiAgentOrchestrator:
             "agent_execution_summary": agent_execution_summary,
         }
 
-        logger.info("Completed diagnosis for incident %s in %s ms", inc_id, total_duration_ms)
+        # -------------------------------------------------------------
+        # STEP 8: Database Persistence (If DB session provided)
+        # -------------------------------------------------------------
+        if db is not None:
+            try:
+                from app.db.repository import save_diagnosis_result, save_telemetry_batch
+                save_diagnosis_result(db, final_report)
+                if not df.empty:
+                    save_telemetry_batch(db, df.to_dict(orient="records"), incident_id=inc_id)
+            except Exception as db_exc:
+                logger.warning("Database persistence skipped or encountered non-fatal error: %s", db_exc)
+
+        logger.info("Completed diagnosis for incident %s (%s) in %s ms", inc_id, diag_id, total_duration_ms)
         return final_report
 
     # =========================================================================
@@ -306,15 +332,21 @@ class MultiAgentOrchestrator:
 
     def _build_empty_response(self, incident_id: str) -> Dict[str, Any]:
         """Builds an explicit response when telemetry input is empty."""
+        diag_id = f"DIAG-{uuid.uuid4().hex[:8].upper()}"
         return {
+            "diagnosis_id": diag_id,
             "incident_summary": {
                 "incident_id": incident_id,
+                "diagnosis_id": diag_id,
                 "timestamp": datetime.now(timezone.utc).isoformat(),
                 "overall_status": "UNKNOWN",
                 "severity": "informational",
                 "affected_devices": [],
                 "affected_device_count": 0,
                 "affected_network_segments": [],
+                "topology_scope": "none",
+                "is_shared_infrastructure_fault": False,
+                "scope_summary": "Empty telemetry provided; no device nodes identified.",
             },
             "probable_root_cause": {
                 "primary_hypothesis": "Insufficient Telemetry",

@@ -57,3 +57,17 @@ ml/datasets/raw/*.json
 ml/datasets/processed/*.csv
 !ml/datasets/raw/.gitkeep
 !ml/datasets/processed/.gitkeep
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+netcoop.db
+# Local database files
+*.db
+*.sqlite
+*.sqlite3
+# Local database files
+*.db
+*.sqlite
+*.sqlite3

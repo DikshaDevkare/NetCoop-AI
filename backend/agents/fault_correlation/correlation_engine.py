@@ -120,8 +120,26 @@ class CorrelationEngine:
         ml_fault = (ml_prediction or {}).get("predicted_fault", "normal")
         evd_types = [e.get("evidence_type", "") for e in evidence_items]
 
-        # Scenario 1: Normal operational state
-        if not findings and not evidence_items and ml_fault == "normal":
+        # Extract temporal insights if available
+        temporal_note = ""
+        if temporal_analysis:
+            trend = temporal_analysis.get("overall_trend")
+            rec = temporal_analysis.get("recovery_pattern")
+            worsening = temporal_analysis.get("worsening_series_count", 0)
+            if trend == "worsening" or worsening > 0:
+                temporal_note = " Chronological trend confirms active metric degradation over consecutive observations."
+            elif trend == "recovering" or rec == "recovering":
+                temporal_note = " Chronological trend indicates recent metric stabilization/recovery."
+            elif rec == "persistent_saturation":
+                temporal_note = " Condition exhibits persistent metric saturation across multiple consecutive sample intervals."
+
+        # Scenario 1: Normal operational state (no anomalies and findings are nominal)
+        is_all_nominal = all(
+            str(f.get("severity", "")).lower() in ("severity.informational", "informational")
+            for f in findings
+        ) if findings else True
+
+        if not evidence_items and is_all_nominal and ml_fault == "normal":
             return (
                 "Normal Operational State",
                 ["Transient minor metric jitter"],
@@ -129,65 +147,114 @@ class CorrelationEngine:
                 Severity.INFORMATIONAL,
             )
 
+        # Corroborating negative evidence note from domain agents
+        negative_corroboration = ""
+        finding_titles = [f.get("title", "") for f in findings]
+        if any("Infrastructure Hardware Nominal" in t for t in finding_titles):
+            negative_corroboration += " Hardware metrics (CPU, RAM, temp, interface errors) confirmed nominal."
+        if any("Network Connectivity & Resolution Nominal" in t for t in finding_titles):
+            negative_corroboration += " Core DNS resolution and gateway paths confirmed nominal."
+
+        # Empirical evidence prioritization over statistical inference
         # Scenario 2: Hardware failure / CPU Peg
-        if "cpu_lockup_overload" in evd_types:
+        if "cpu_lockup_overload" in evd_types or (ml_fault in ("hardware_failure", "cpu_overload") and not evd_types):
             return (
                 "Device Hardware Failure or Control Plane CPU Lockup",
                 ["BGP/Routing protocol storm", "Firmware kernel panic"],
-                f"Severe CPU lockup (>95%) isolated to {', '.join(sorted(list(affected_devices)))} in {', '.join(affected_segments)}.",
+                f"Severe CPU lockup (>95%) isolated to {', '.join(sorted(list(affected_devices)))} in {', '.join(affected_segments)}.{temporal_note}",
                 Severity.CRITICAL,
             )
 
         # Scenario 3: Physical interface / cable fault
-        if "physical_interface_errors_high" in evd_types or ml_fault == "interface_fault":
+        if "physical_interface_errors_high" in evd_types or (ml_fault == "interface_fault" and not evd_types):
             return (
                 "Physical Interface or Layer-1 Cabling Fault",
                 ["Optical SFP transceiver degradation", "Duplex negotiation mismatch"],
-                f"High CRC interface error counters observed on {', '.join(sorted(list(affected_devices)))}.",
+                f"High CRC interface error counters observed on {', '.join(sorted(list(affected_devices)))}.{temporal_note}",
                 Severity.HIGH,
             )
 
         # Scenario 4: Core congestion / buffer saturation
-        if "buffer_overflow_queue_drops" in evd_types or "link_bandwidth_saturation" in evd_types or ml_fault == "congestion":
+        if "buffer_overflow_queue_drops" in evd_types or "link_bandwidth_saturation" in evd_types or (ml_fault == "congestion" and not evd_types):
             return (
                 "Network Uplink Congestion & Queue Buffer Saturation",
                 ["Upstream transit provider throttling", "Microburst traffic surge exceeding queue depth"],
-                f"Simultaneous link saturation and buffer queue overflow affecting {len(affected_devices)} devices across {', '.join(affected_segments)}.",
+                f"Simultaneous link saturation and buffer queue overflow affecting {len(affected_devices)} devices across {', '.join(affected_segments)}.{negative_corroboration}{temporal_note}",
                 Severity.HIGH,
             )
 
-        # Scenario 5: DNS / DHCP service failure
-        if "dns_resolution_timeout" in evd_types or ml_fault == "dns_dhcp_failure":
-            return (
-                "Core DNS Resolution Service Failure",
-                ["DHCP lease pool exhaustion", "Campus recursive DNS cache poisoning/dos"],
-                f"Severe DNS lookup timeouts observed impacting device connectivity in {', '.join(affected_segments)}.",
-                Severity.HIGH,
-            )
-
-        # Scenario 6: Weak Wi-Fi RF attenuation
-        if "critical_weak_wifi_signal" in evd_types or "degraded_wifi_signal" in evd_types or ml_fault == "weak_wifi":
+        # Scenario 5: Weak Wi-Fi RF attenuation
+        if "critical_weak_wifi_signal" in evd_types or "degraded_wifi_signal" in evd_types or (ml_fault == "weak_wifi" and not evd_types):
             return (
                 "Wireless RF Path Loss / Severe Wi-Fi Signal Attenuation",
                 ["Access point co-channel interference", "AP radio power misconfiguration"],
-                f"Severe wireless attenuation (RSSI <= -75 dBm) observed on {', '.join(sorted(list(affected_devices)))}.",
+                f"Severe wireless attenuation (RSSI <= -75 dBm) observed on {', '.join(sorted(list(affected_devices)))}.{temporal_note}",
                 Severity.MEDIUM,
             )
 
+        # Scenario 6: DNS / DHCP service failure
+        if "dns_resolution_timeout" in evd_types or (ml_fault == "dns_dhcp_failure" and not evd_types):
+            return (
+                "Core DNS Resolution Service Failure",
+                ["DHCP lease pool exhaustion", "Campus recursive DNS cache poisoning/dos"],
+                f"Severe DNS lookup timeouts observed impacting device connectivity in {', '.join(affected_segments)}.{temporal_note}",
+                Severity.HIGH,
+            )
+
         # Scenario 7: Latency spike / transit degradation
-        if "critical_latency_spike" in evd_types or ml_fault == "latency_spike":
+        if "critical_latency_spike" in evd_types or (ml_fault == "latency_spike" and not evd_types):
             return (
                 "Transit Latency Degradation / Upstream Peering Path Delay",
                 ["Intermediate routing loop / asymmetric routing", "Core router queuing delay"],
-                f"Elevated round-trip latency detected across {', '.join(sorted(list(affected_devices)))} without local queue drops.",
+                f"Elevated round-trip latency detected across {', '.join(sorted(list(affected_devices)))} without local queue drops.{temporal_note}",
+                Severity.MEDIUM,
+            )
+
+        # ML-guided fallback when empirical evidence is mixed or non-specific
+        if ml_fault == "weak_wifi":
+            return (
+                "Wireless RF Path Loss / Severe Wi-Fi Signal Attenuation",
+                ["Access point co-channel interference", "AP radio power misconfiguration"],
+                f"Wireless performance degradation predicted across {', '.join(sorted(list(affected_devices)))}.{temporal_note}",
+                Severity.MEDIUM,
+            )
+        elif ml_fault == "congestion":
+            return (
+                "Network Uplink Congestion & Queue Buffer Saturation",
+                ["Upstream transit provider throttling", "Microburst traffic surge exceeding queue depth"],
+                f"Traffic bottleneck predicted across {len(affected_devices)} devices.{temporal_note}",
+                Severity.HIGH,
+            )
+        elif ml_fault == "dns_dhcp_failure":
+            return (
+                "Core DNS Resolution Service Failure",
+                ["DHCP lease pool exhaustion", "Campus recursive DNS cache poisoning/dos"],
+                f"Name resolution degradation predicted across {', '.join(affected_segments)}.{temporal_note}",
+                Severity.HIGH,
+            )
+        elif ml_fault == "interface_fault":
+            return (
+                "Physical Interface or Layer-1 Cabling Fault",
+                ["Optical SFP transceiver degradation", "Duplex negotiation mismatch"],
+                f"Interface physical errors predicted across {', '.join(sorted(list(affected_devices)))}.{temporal_note}",
+                Severity.HIGH,
+            )
+        elif ml_fault == "latency_spike":
+            return (
+                "Transit Latency Degradation / Upstream Peering Path Delay",
+                ["Intermediate routing loop / asymmetric routing", "Core router queuing delay"],
+                f"Transit path delay predicted across {', '.join(sorted(list(affected_devices)))}.{temporal_note}",
                 Severity.MEDIUM,
             )
 
         # Default fallback synthesis
-        first_cause = findings[0].get("suspected_cause") if findings else "Unclassified Telemetry Anomaly"
+        first_fault_findings = [f for f in findings if str(f.get("severity", "")).lower() not in ("severity.informational", "informational")]
+        first_cause = first_fault_findings[0].get("suspected_cause") if first_fault_findings else (
+            findings[0].get("suspected_cause") if findings else "Unclassified Telemetry Anomaly"
+        )
         return (
             str(first_cause),
             ["Multi-factor intermittent network degradation", "Device resource pressure"],
-            f"Anomalous telemetry patterns detected across {len(affected_devices)} devices.",
+            f"Anomalous telemetry patterns detected across {len(affected_devices)} devices.{temporal_note}",
             Severity.MEDIUM,
         )

@@ -29,6 +29,19 @@ class HealthResponse(BaseModel):
     timestamp: str = Field(..., description="UTC ISO 8601 timestamp of request evaluation")
 
 
+class SystemStatusResponse(BaseModel):
+    """Comprehensive system status schema for frontend integration."""
+
+    api_status: str = Field("healthy", description="Status of API endpoints")
+    database_status: str = Field(..., description="Status of database connectivity")
+    protocol_version: str = Field("1.0", description="Interoperability protocol version")
+    backend_version: str = Field(..., description="Semantic backend version")
+    environment: str = Field(..., description="Runtime environment")
+    models: list[dict] = Field(default_factory=list, description="Loaded machine learning pipelines status")
+    agents: list[dict] = Field(default_factory=list, description="Registered specialized diagnostic agents")
+    timestamp: str = Field(..., description="UTC ISO 8601 evaluation timestamp")
+
+
 root_router = APIRouter(tags=["General"])
 health_router = APIRouter(tags=["Health"])
 
@@ -73,5 +86,47 @@ async def get_health() -> HealthResponse:
         application=settings.APP_NAME,
         version=settings.APP_VERSION,
         environment=settings.APP_ENV,
+        timestamp=current_utc,
+    )
+
+
+@health_router.get(
+    "/system/status",
+    response_model=SystemStatusResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Complete System Operational Status",
+    description="Returns verified live status for database, ML pipelines, diagnostic agents, and protocol version.",
+)
+async def get_system_status() -> SystemStatusResponse:
+    """Return consolidated system status across backend components."""
+    settings = get_settings()
+    current_utc = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+    # Check database
+    db_status = "connected"
+    try:
+        from sqlalchemy import text
+        from app.db.session import SessionLocal
+        with SessionLocal() as session:
+            session.execute(text("SELECT 1"))
+    except Exception as exc:
+        db_status = f"unavailable: {str(exc)}"
+
+    # Get ML models
+    from app.services.orchestration.model_service import ModelService
+    model_statuses = ModelService.get_instance().get_model_statuses()
+
+    # Get Agents
+    from app.services.orchestration.orchestrator import MultiAgentOrchestrator
+    agent_statuses = MultiAgentOrchestrator().get_agent_statuses()
+
+    return SystemStatusResponse(
+        api_status="healthy",
+        database_status=db_status,
+        protocol_version="1.0",
+        backend_version=settings.APP_VERSION,
+        environment=settings.APP_ENV,
+        models=model_statuses,
+        agents=agent_statuses,
         timestamp=current_utc,
     )

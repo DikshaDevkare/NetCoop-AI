@@ -99,25 +99,30 @@ def evaluate_infrastructure_rules(row: Dict[str, Any]) -> List[Dict[str, Any]]:
     # 4. Interface physical errors check
     errs = row.get("interface_errors")
     if errs is not None:
-        errs = int(errs)
-        if errs >= INTERFACE_ERRORS_CRITICAL:
-            anomalies.append({
-                "type": "physical_interface_errors_high",
-                "metric": "interface_errors",
-                "observed": errs,
-                "expected": "0 errors",
-                "severity": Severity.CRITICAL,
-                "description": f"Severe physical interface CRC/FCS error rate: {errs} errors.",
-            })
-        elif errs >= INTERFACE_ERRORS_ELEVATED:
-            anomalies.append({
-                "type": "physical_interface_errors_moderate",
-                "metric": "interface_errors",
-                "observed": errs,
-                "expected": "0 errors",
-                "severity": Severity.HIGH,
-                "description": f"Elevated physical interface errors detected: {errs} errors.",
-            })
+        try:
+            import pandas as pd
+            if pd.notna(errs):
+                errs_val = int(float(errs))
+                if errs_val >= INTERFACE_ERRORS_CRITICAL:
+                    anomalies.append({
+                        "type": "physical_interface_errors_high",
+                        "metric": "interface_errors",
+                        "observed": errs_val,
+                        "expected": "0 errors",
+                        "severity": Severity.CRITICAL,
+                        "description": f"Severe physical interface CRC/FCS error rate: {errs_val} errors.",
+                    })
+                elif errs_val >= INTERFACE_ERRORS_ELEVATED:
+                    anomalies.append({
+                        "type": "physical_interface_errors_moderate",
+                        "metric": "interface_errors",
+                        "observed": errs_val,
+                        "expected": "0 errors",
+                        "severity": Severity.HIGH,
+                        "description": f"Elevated physical interface errors detected: {errs_val} errors.",
+                    })
+        except (ValueError, TypeError):
+            pass
 
     # 5. Uptime / unexpected reboot check
     uptime = row.get("device_uptime_seconds")

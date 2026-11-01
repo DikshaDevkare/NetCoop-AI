@@ -26,6 +26,7 @@ class InfrastructureHealthAnalyzer:
         affected_devices: set = set()
 
         records = telemetry.to_dict(orient="records")
+        all_devices = sorted(list(set(str(r.get("device_id", "DEV-UNKNOWN")) for r in records)))
         for row in records:
             dev_id = str(row.get("device_id", "DEV-UNKNOWN"))
             row_anomalies = evaluate_infrastructure_rules(row)
@@ -79,6 +80,17 @@ class InfrastructureHealthAnalyzer:
                 "affected_devices": sorted(list(affected_devices)),
                 "alternative_causes": alts,
                 "anomalies": all_anomalies,
+            })
+        else:
+            findings.append({
+                "title": "Infrastructure Hardware Nominal",
+                "description": f"Chassis temperatures, CPU utilization, memory headroom, and interface error counters are within nominal operating limits on device(s): {', '.join(all_devices)}.",
+                "suspected_cause": "Normal Operational Baseline (Hardware Ruled Out)",
+                "severity": Severity.INFORMATIONAL,
+                "confidence": ConfidenceLevel.HIGH,
+                "affected_devices": all_devices,
+                "alternative_causes": [],
+                "anomalies": [],
             })
 
         return {

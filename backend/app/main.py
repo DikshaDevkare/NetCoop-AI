@@ -14,9 +14,14 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.config import get_settings
 from app.core.logging_config import setup_logging, get_logger
 from app.core.exceptions import register_exception_handlers
+from app.db.session import init_db
 from app.api.health import health_router, root_router
 from app.api.protocol import protocol_router
 from app.api.diagnosis import diagnosis_router
+from app.api.devices import devices_router
+from app.api.incidents import incidents_router
+from app.api.telemetry import telemetry_router
+from app.api.reports import reports_router
 
 logger = get_logger("netcoop.main")
 
@@ -36,6 +41,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
         settings.APP_ENV,
         settings.DEBUG,
     )
+    init_db()
     yield
     logger.info("Shutting down %s", settings.APP_NAME)
 
@@ -51,6 +57,9 @@ def create_application() -> FastAPI:
 
     # Pre-configure logging
     setup_logging(settings.LOG_LEVEL)
+
+    # Initialize database tables
+    init_db()
 
     application = FastAPI(
         title=settings.APP_NAME,
@@ -93,6 +102,14 @@ def create_application() -> FastAPI:
     application.include_router(protocol_router, prefix=settings.API_PREFIX)
     # Unified multi-agent network fault diagnosis registered under configured prefix (/api/diagnosis)
     application.include_router(diagnosis_router, prefix=settings.API_PREFIX)
+    # Device inventory and historical telemetry registered under (/api/devices)
+    application.include_router(devices_router, prefix=settings.API_PREFIX)
+    # Network incident tracking registered under (/api/incidents)
+    application.include_router(incidents_router, prefix=settings.API_PREFIX)
+    # Standardized telemetry ingestion registered under (/api/telemetry)
+    application.include_router(telemetry_router, prefix=settings.API_PREFIX)
+    # Structured report downloads registered under (/api/reports)
+    application.include_router(reports_router, prefix=settings.API_PREFIX)
 
     return application
 

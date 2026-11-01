@@ -28,6 +28,7 @@ class TelemetryPerformanceAnalyzer:
         affected_devices: set = set()
 
         records = telemetry.to_dict(orient="records")
+        all_devices = sorted(list(set(str(r.get("device_id", "DEV-UNKNOWN")) for r in records)))
         for row in records:
             dev_id = str(row.get("device_id", "DEV-UNKNOWN"))
             row_anomalies = evaluate_performance_rules(row)
@@ -90,6 +91,17 @@ class TelemetryPerformanceAnalyzer:
                 "affected_devices": sorted(list(affected_devices)),
                 "alternative_causes": alts,
                 "anomalies": all_anomalies,
+            })
+        else:
+            findings.append({
+                "title": "Network Telemetry & Performance Nominal",
+                "description": f"Latency, jitter, packet loss, and queue depths remain within acceptable SLA baseline bounds across device(s): {', '.join(all_devices)}.",
+                "suspected_cause": "Normal Performance Baseline",
+                "severity": Severity.INFORMATIONAL,
+                "confidence": ConfidenceLevel.HIGH,
+                "affected_devices": all_devices,
+                "alternative_causes": [],
+                "anomalies": [],
             })
 
         return {

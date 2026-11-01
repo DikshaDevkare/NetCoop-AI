@@ -26,6 +26,7 @@ class ConnectivityAnalyzer:
         affected_devices: set = set()
 
         records = telemetry.to_dict(orient="records")
+        all_devices = sorted(list(set(str(r.get("device_id", "DEV-UNKNOWN")) for r in records)))
         for row in records:
             dev_id = str(row.get("device_id", "DEV-UNKNOWN"))
             row_anomalies = evaluate_connectivity_rules(row)
@@ -71,6 +72,17 @@ class ConnectivityAnalyzer:
                 "affected_devices": sorted(list(affected_devices)),
                 "alternative_causes": alts,
                 "anomalies": all_anomalies,
+            })
+        else:
+            findings.append({
+                "title": "Network Connectivity & Resolution Nominal",
+                "description": f"Core DNS name resolution, gateway reachability, and client connectivity remain nominal across device(s): {', '.join(all_devices)}.",
+                "suspected_cause": "Normal Connectivity Baseline (Layer-3 Ruled Out)",
+                "severity": Severity.INFORMATIONAL,
+                "confidence": ConfidenceLevel.HIGH,
+                "affected_devices": all_devices,
+                "alternative_causes": [],
+                "anomalies": [],
             })
 
         return {
