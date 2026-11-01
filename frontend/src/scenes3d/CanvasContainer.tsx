@@ -37,7 +37,7 @@ export function CanvasContainer({
   // Hero section is visible during intro scene >= 3 or when scrollProgress < 0.35
   const showHeroRobot = isIntro ? introScene >= 3 : scrollProgress < 0.35;
   const showPortal = isIntro && introScene >= 1 && introScene <= 3;
-  const showGlobe = isIntro ? introScene >= 5 : scrollProgress >= 0.15 && scrollProgress < 0.65;
+  const showGlobe = isIntro ? introScene >= 5 : scrollProgress < 0.65;
   const showInfrastructure = !isIntro && scrollProgress >= 0.35 && scrollProgress < 0.75;
   const showAgents = !isIntro && scrollProgress >= 0.55 && scrollProgress < 0.95;
 
@@ -107,9 +107,18 @@ export function CanvasContainer({
             </group>
           )}
 
-          {/* --- INTERACTIVE 3D NETWORK GLOBE --- */}
+          {/* --- INTERACTIVE 3D NETWORK GLOBE (ABOVE ROBOT'S EXTENDED HAND) --- */}
           {showGlobe && (
-            <group position={[isIntro ? 1.0 : 0, 0.4, isIntro ? 0.5 : 0]}>
+            <group
+              position={
+                isIntro
+                  ? [1.2, 0.9, 0.3]
+                  : scrollProgress < 0.25
+                  ? [1.35, 1.15, 0.2]
+                  : [0, 0.3, 0]
+              }
+              scale={isIntro || scrollProgress < 0.25 ? 0.48 : 0.95}
+            >
               <NetworkGlobe
                 onSelectNode={onSelectNode}
                 selectedNodeId={selectedNodeId}

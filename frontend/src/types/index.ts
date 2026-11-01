@@ -30,6 +30,7 @@ export interface AgentInfo {
   description: string;
   accentColor: string;
   secondaryColor: string;
+  color?: string;
   iconName: string;
   monitoredMetrics: string[];
   diagnosticCapability: string;

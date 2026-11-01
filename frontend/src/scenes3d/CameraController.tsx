@@ -23,9 +23,9 @@ export function CameraController({
       targetPos.set(0, 1.0, 6.5);
       targetLook.set(0, 1.0, 0);
     } else if (scrollProgress < 0.2) {
-      // Section 1: Hero (Focus on Robot on the right, wide aperture)
-      targetPos.set(0.6, 1.4, 5.2);
-      targetLook.set(0.8, 1.2, 0);
+      // Section 1: Hero (Center on Robot on the platform & Globe above hand)
+      targetPos.set(0.7, 0.8, 5.2);
+      targetLook.set(0.7, 0.5, 0);
     } else if (scrollProgress < 0.4) {
       // Section 2: Globe (Center on the holographic globe)
       const t = (scrollProgress - 0.2) / 0.2;
