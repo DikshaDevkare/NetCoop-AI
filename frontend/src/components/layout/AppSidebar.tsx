@@ -1,12 +1,12 @@
 import { NavLink, useLocation, Link } from 'react-router-dom';
 import {
   LayoutDashboard,
-  FilePlus,
-  AlertTriangle,
+  FilePlus2,
+  TriangleAlert,
   Users,
   FileText,
-  Clock,
-  Layers,
+  Clock3,
+  Layers3,
   Activity,
 } from 'lucide-react';
 import { cn } from '../../lib/utils.ts';
@@ -28,12 +28,12 @@ export function AppSidebar({
 
   const navItems = [
     { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
-    { label: 'New Diagnosis', path: '/new-diagnosis', icon: FilePlus },
-    { label: 'Incident Details', path: '/incident-details', icon: AlertTriangle },
+    { label: 'New Diagnosis', path: '/new-diagnosis', icon: FilePlus2 },
+    { label: 'Incident Details', path: '/incident-details', icon: TriangleAlert },
     { label: 'Agent Monitor', path: '/agent-monitor', icon: Users },
     { label: 'Diagnosis Report', path: '/diagnosis-report', icon: FileText },
-    { label: 'Incident History', path: '/incident-history', icon: Clock },
-    { label: 'Interop Lab', path: '/interop-lab', icon: Layers },
+    { label: 'Incident History', path: '/incident-history', icon: Clock3 },
+    { label: 'Interop Lab', path: '/interop-lab', icon: Layers3 },
   ];
 
   return (
@@ -54,7 +54,7 @@ export function AppSidebar({
       className={cn('app-sidebar', mobileMenuOpen && 'sidebar-open')}
     >
       <div>
-        {/* Brand Header */}
+        {/* Brand Header: NETCOOP AI with small orange rounded-square emblem */}
         <Link
           to="/"
           onClick={onCloseMobile}
@@ -72,19 +72,19 @@ export function AppSidebar({
               width: '32px',
               height: '32px',
               borderRadius: '8px',
-              background: 'linear-gradient(135deg, #FF9436, #FF7A18)',
+              background: 'linear-gradient(135deg, #FF9A24, #FF6A16)',
               color: '#FFFFFF',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              boxShadow: '0 0 14px rgba(255, 122, 24, 0.5)',
+              boxShadow: '0 0 14px rgba(255, 106, 22, 0.45)',
             }}
           >
             <Activity size={18} />
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span style={{ fontSize: '16px', fontWeight: 800, color: '#F5F5F7', letterSpacing: '-0.02em' }}>
-              NetCoop <span style={{ color: '#FF7A18' }}>AI</span>
+            <span style={{ fontSize: '16px', fontWeight: 800, color: '#F4F4F7', letterSpacing: '-0.02em' }}>
+              NETCOOP <span style={{ color: '#FF9A24' }}>AI</span>
             </span>
           </div>
         </Link>
@@ -109,26 +109,26 @@ export function AppSidebar({
                     textDecoration: 'none',
                     fontSize: '13px',
                     fontWeight: active ? 600 : 500,
-                    color: active ? '#FFFFFF' : '#A3A6B3',
+                    color: active ? '#FFFFFF' : '#A0A3B1',
                     background: active
-                      ? 'linear-gradient(135deg, #FF9436 0%, #FF7A18 60%, #E65A00 100%)'
+                      ? 'linear-gradient(135deg, #FF9A24 0%, #FF6A16 60%, #C94C0A 100%)'
                       : 'transparent',
-                    border: active ? '1px solid rgba(255, 179, 71, 0.5)' : '1px solid transparent',
+                    border: active ? '1px solid rgba(255, 154, 36, 0.5)' : '1px solid transparent',
                     boxShadow: active
-                      ? '0 0 18px -2px rgba(255, 122, 24, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.25)'
+                      ? '0 0 18px -2px rgba(255, 106, 22, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.25)'
                       : 'none',
                     transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
                   };
                 }}
                 onMouseEnter={(e) => {
                   if (!location.pathname.startsWith(item.path)) {
-                    e.currentTarget.style.color = '#F5F5F7';
+                    e.currentTarget.style.color = '#F4F4F7';
                     e.currentTarget.style.background = 'rgba(255, 255, 255, 0.04)';
                   }
                 }}
                 onMouseLeave={(e) => {
                   if (!location.pathname.startsWith(item.path)) {
-                    e.currentTarget.style.color = '#A3A6B3';
+                    e.currentTarget.style.color = '#A0A3B1';
                     e.currentTarget.style.background = 'transparent';
                   }
                 }}
@@ -141,7 +141,7 @@ export function AppSidebar({
         </nav>
       </div>
 
-      {/* Sidebar Footer: System Online Status */}
+      {/* Sidebar Footer: System Online Status & Quorum */}
       <div style={{ padding: '18px 20px', borderTop: '1px solid rgba(255, 255, 255, 0.06)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <span
@@ -149,17 +149,17 @@ export function AppSidebar({
               width: '8px',
               height: '8px',
               borderRadius: '50%',
-              backgroundColor: '#10B981',
-              boxShadow: '0 0 8px #10B981',
+              backgroundColor: '#21D69A',
+              boxShadow: '0 0 8px #21D69A',
             }}
           />
-          <span style={{ fontSize: '12px', fontWeight: 600, color: '#F5F5F7' }}>
+          <span style={{ fontSize: '12px', fontWeight: 600, color: '#F4F4F7' }}>
             System Online
           </span>
         </div>
         <div style={{ fontSize: '10px', color: '#6A6D7C', marginTop: '4px', letterSpacing: '0.02em' }}>
           {backendConnected && backendVersion
-            ? `FastAPI v${backendVersion}`
+            ? `FastAPI v${backendVersion} • Quorum 5/5`
             : 'Multi-Agent Quorum 5/5 Active'}
         </div>
       </div>

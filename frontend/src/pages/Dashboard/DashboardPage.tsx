@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { AppLayout } from '../../components/layout/AppLayout.tsx';
 import { GlassCard } from '../../components/ui/GlassCard.tsx';
-import { CommandCentreTopology } from '../../components/dashboard/CommandCentreTopology.tsx';
+import { NetworkHubScene } from '../../components/three/NetworkHubScene.tsx';
 import { TelemetryChart } from '../../components/ui/TelemetryChart.tsx';
 import { HealthGauge } from '../../components/ui/HealthGauge.tsx';
 import { AnimatedCounter } from '../../components/ui/AnimatedCounter.tsx';
@@ -122,8 +122,8 @@ export function DashboardPage() {
           }}
           className="dashboard-main-grid"
         >
-          {/* Left/Center: Interactive 3D Network Topology */}
-          <CommandCentreTopology onNodeSelect={(nodeName) => setSelectedNodeName(nodeName)} />
+          {/* Left/Center: Interactive 3D Network Topology (Exact Reference Match) */}
+          <NetworkHubScene onNodeSelect={(nodeName) => setSelectedNodeName(nodeName)} />
 
           {/* Right: Live Telemetry Sparklines */}
           <TelemetryChart />

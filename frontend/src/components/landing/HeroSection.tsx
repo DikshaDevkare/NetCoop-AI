@@ -118,12 +118,11 @@ export function HeroSection() {
               fontWeight: 800,
               letterSpacing: '-0.03em',
               lineHeight: 1.12,
-              color: '#F5F5F7',
+              color: '#F4F4F7',
               marginBottom: '22px',
             }}
           >
-            Autonomous Network Resilience Driven by{' '}
-            <span className="gradient-ember-text">Cooperative AI</span>
+            Autonomous Network <span className="gradient-ember-text">Intelligence</span>
           </h1>
 
           {/* Subtitle */}
@@ -131,14 +130,12 @@ export function HeroSection() {
             style={{
               fontSize: '17px',
               lineHeight: 1.65,
-              color: '#A3A6B3',
+              color: '#A0A3B1',
               maxWidth: '560px',
               marginBottom: '32px',
             }}
           >
-            NetCoop AI coordinates five specialized autonomous agents to ingest heterogeneous telemetry,
-            isolate root causes across complex topologies in milliseconds, and synthesize explainable,
-            human-verified remediation workflows.
+            A multi-agent network diagnosis platform that transforms fragmented telemetry into explainable root-cause analysis and verified remediation workflows.
           </p>
 
           {/* Action CTAs */}

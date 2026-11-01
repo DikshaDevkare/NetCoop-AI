@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { AppLayout } from '../../components/layout/AppLayout.tsx';
 import { GlassCard } from '../../components/ui/GlassCard.tsx';
-import { IncidentTopology } from '../../components/incident/IncidentTopology.tsx';
+import { BuildingTopologyScene } from '../../components/three/BuildingTopologyScene.tsx';
 import { ResponsiveContainer, LineChart, Line, Tooltip } from 'recharts';
 
 const UTILIZATION_DATA = [
@@ -82,8 +82,8 @@ export function IncidentDetailsPage() {
           }}
           className="incident-main-grid"
         >
-          {/* Main 3D Topology Area */}
-          <IncidentTopology />
+          {/* Main 3D Perspective Building Topology Area */}
+          <BuildingTopologyScene />
 
           {/* Right Column: Device Details Panel (Exact Reference Match) */}
           <GlassCard variant="default" style={{ padding: '22px', display: 'flex', flexDirection: 'column', gap: '16px' }}>

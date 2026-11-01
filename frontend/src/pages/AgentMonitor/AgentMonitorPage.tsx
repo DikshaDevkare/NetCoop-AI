@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { AppLayout } from '../../components/layout/AppLayout.tsx';
 import { GlassCard } from '../../components/ui/GlassCard.tsx';
-import { AgentOrchestration3D } from '../../components/agents/AgentOrchestration3D.tsx';
+import { AgentOrbitScene } from '../../components/three/AgentOrbitScene.tsx';
 import { ExecutionTimeline } from '../../components/agents/ExecutionTimeline.tsx';
 import { Terminal } from 'lucide-react';
 
@@ -39,8 +39,8 @@ export function AgentMonitorPage() {
         >
           {/* Main Radial 5-Agent 3D Orchestration Diagram */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            <AgentOrchestration3D onSelectAgent={(agent) => setSelectedAgentName(agent.name)} />
-            <div style={{ fontSize: '12px', color: '#A855F7' }}>
+            <AgentOrbitScene onSelectAgent={(agent) => setSelectedAgentName(agent.name)} />
+            <div style={{ fontSize: '12px', color: '#9A45FF' }}>
               Active agent focus: <strong>{selectedAgentName}</strong>
             </div>
           </div>
